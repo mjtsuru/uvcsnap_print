@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sample App</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form>
+
+      <input type="button" value="scan" onclick="OnSendClick();"/>
+    </form>
+    <div id="container">
+
+        <img id="img" width="300" height="300"></img>
+
+    </div>
+    <form>
+
+      <input type="button" value="transform" onclick="OnTransClick();"/>
+    </form>
+    <canvas id="c1" width="300" height="300"></canvas>
+    <form>
+
+      <input type="button" value="print" onclick="OnPrintClick();"/>
+    </form>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+　　　var socket = io();
+
+    socket.on('message', function(data, ack) {
+      console.log(data);
+      ack('client ack for send');
+
+      //[TODO] http get > img source
+      var xhr = new XMLHttpRequest();
+		  xhr.open('GET', 'http://localhost:80/scan/picture.jpg', true);
+      xhr.onload = function(){
+
+			var response = xhr.responseText;
+			var binary = ""
+			for(i=0;i<response.length;i++){
+				binary += String.fromCharCode(response.charCodeAt(i) & 0xff);
+			}
+
+			img.src = 'data:image/jpeg;base64,' + btoa(binary);
+
+		}
+
+		xhr.overrideMimeType('text/plain; charset=x-user-defined');
+		xhr.send();
+
+    });
+
+    function OnEmitClick() {
+      console.log("click");
+      socket.emit('msg', 'data', function onack(res) {
+        console.log(res);
+      });
+    };
+
+    function OnSendClick() {
+      console.log("click");
+      socket.send('scan', function onack(res) {
+        console.log(res);
+      });
+    };
+
+    function OnTransClick() {
+      const THRESHOLD = 64;
+
+      var scale = 0.5;
+      var canvas = document.getElementById("c1");
+      var ctx = canvas.getContext("2d");
+      var cvs = new Image();
+      cvs.src = img.src;
+      cvs.onload = function() {
+        var dstWidth = canvas.width;
+        var dstHeight = canvas.height;
+        // canvas.width = dstWidth;
+        // canvas.height = dstHeight;
+        ctx.drawImage(cvs, 0, 0, cvs.width, cvs.height, 0, 0, dstWidth, dstHeight);
+        var src = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var dst = ctx.createImageData(canvas.width, canvas.height);
+
+          for (var i = 0; i < src.data.length; i=i+4) {
+              var y = ~~(0.299 * src.data[i] + 0.587 * src.data[i + 1] + 0.114 * src.data[i + 2]);
+              var ret = (y > THRESHOLD) ? 255 : 0;
+              dst.data[i] = dst.data[i+1] = dst.data[i+2] = ret;
+              dst.data[i+3] = src.data[i+3];
+          }
+
+          ctx.putImageData(dst, 0, 0);
+          };
+    };
+
+    function OnPrintClick() {
+      var b64file = c1.toDataURL('image/jpeg');
+      var form = new FormData();
+      var xhr = new XMLHttpRequest();
+      var boundary = '------multipartformboundary' + (new Date).getTime();
+      var dashdash = '--';
+      var crlf = '\r\n';
+
+
+      var decodefile = window.atob(b64file.split(',')[1]);
+      var content = dashdash+boundary+crlf+'Content-Disposition: form-data; name="file"; filename="picture.jpg"'+crlf+'Content-Type: image/jpeg'+crlf+crlf+decodefile+crlf+dashdash+boundary+dashdash+crlf;
+
+      xhr.open('POST', 'http://localhost:80/post');
+
+      axios.defaults.headers.common = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      };
+      axios({
+  method: 'post',
+  url: 'http://localhost:80/post',
+  data: {
+      pad: b64file
+    }
+});
+
+
+    };
+
+　</script>
+</body>
+</html>

@@ -60,7 +60,7 @@ var print_watcher = chokidar.watch(LOCAL_PRINT_BUFFER, {
   ignoreInitial:true //without this flag, add events occurs when the watcher is created
 });
 
-scan_watcher.on('ready', function() { console.log("start"); })
+scan_watcher.on('ready', function() { console.log("start watching " + LOCAL_SCANNED_BUFFER); })
 	.on('add', function(path) { console.log("added file-> " + path); })
 	.on('addDir', function(path) { console.log("added dir-> " + path); })
 	.on('unlink', function(path) { console.log("removed file-> " + path); })
@@ -68,7 +68,7 @@ scan_watcher.on('ready', function() { console.log("start"); })
 	.on('change', function(path) { console.log("modified-> " + path); })
 	.on('error', function(error) { console.log("error-> " + error); });
 
-print_watcher.on('ready', function() { console.log("start"); })
+print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRINT_BUFFER); })
 	.on('add', function(path) {
     //[TODO] Create unique file name
 /*
@@ -220,8 +220,9 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
   // [TODO] Transform jpg to pdf then issue jobs to the printers.
   // Monitor printer jobs and care
 
-  // response should be sent immediately
-  res.sendStatus(200);
+  // response should be sent immediately.
+  // Now responding with Internal Server Error.
+  res.sendStatus(500);
 });
 
 app.post('/' + URI_PRINT_BUFFER,  (req, res)  => {

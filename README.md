@@ -35,11 +35,51 @@ If the client application runs locally and only need all images scanned, please 
 #### 1-2. REST APIs for getting newly scanned images
 The name of image files in the buffer (sequentially scanned and not yet known by the app) are listed in a JSON format.  
 
-HTTP GET Request to the URI **/scan_list** provides the file name list. The request for the list also triggers the file in **/scanned_buffer** moves to the **/scanned_images**.
-
+HTTP GET Request to the URI **/scan_list** provides the file name list. The request for the list also triggers the files in **/scanned_buffer** move to **/scanned_images**.  
 HTTP GET Request to the file under **/scanned_images** provides the image file.  
-
 HTTP GET Request to the URI **/refresh_scan** triggers the deletion of files under **/scanned_images** and elements in the list (works just as a command).
+
+##### 1-2-1
+* **URI**
+
+  scan_list
+
+* **Method**
+  GET
+
+* **Success Response:**
+  * **Content:** JSONString
+
+* **Error Response:**
+  * **Code:** 404 NOTFOUND
+
+##### 1-2-2
+* **URI**
+
+  scanned_images
+
+* **Method**
+  GET
+
+* **Success Response:**
+  * **Content:** jpeg
+
+* **Error Response:**
+  * **Code:** 404 NOTFOUND
+
+##### 1-2-3
+* **URI**
+
+  refresh_scan
+
+* **Method**
+  GET
+
+* **Success Response:**
+  * **Code:** 200 OK
+
+* **Error Response:**
+  * **Code:** 500 INTERNALSERVERERROR
 
 ### 2. Print received images
 Expected user-case is that the application process the images and put it for the printing. Note that 1 to 6 images in certain intervals (called "block") are expected be printed out.
@@ -47,8 +87,29 @@ Expected user-case is that the application process the images and put it for the
 The server accepts HTTP POST Request to the URI **/print_buffer** with the image file.
 After all the files in one "block" is put, please issue the HTTP GET Request to the URI **/exec_print** (works just as a command). It triggers the server to print all the images in the "block" then **print_buffer** is flushed.
 
+##### 2-1-1
+* **URI**
+  print_buffer
+
+* **Method**
+  POST
+
+* **Success Response:** 200 OK
+
+* **Error Response:** TBD
+
 #### 2-2. Use locally
 If the client application runs locally, just put the image files to be printed out to **print_buffer** directory then issue the GET Request to **/exec_print** after the "block" of images are put like the previous section.
+
+* **URI**
+  exec_print
+
+* **Method**
+  GET
+
+* **Success Response:** 200 OK
+
+* **Error Response:** 500 INTERNALSERVERERROR
 
 ## Install
 [TODO]

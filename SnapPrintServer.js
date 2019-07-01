@@ -16,6 +16,7 @@ const URI_SCANNED_IMAGES = "scanned_images";
 const URI_PRINT_BUFFER = "print_buffer";
 const URI_SCAN_LIST = "scan_list";
 const URI_REFRESH_SCAN = "refresh_scan";
+const URI_EXEC_PRINT = "exec_print";
 const LOCAL_SCANNED_BUFFER = URI_SCANNED_BUFFER;
 const LOCAL_SCANNED_IMAGES = URI_SCANNED_IMAGES;
 const LOCAL_PRINT_BUFFER = URI_PRINT_BUFFER;
@@ -28,6 +29,7 @@ const async = require('async');
 // for http server
 var HTTP = require( "http" );
 var FS = require( "fs" );
+var glob = require("glob");
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
@@ -69,6 +71,7 @@ scan_watcher.on('ready', function() { console.log("start"); })
 print_watcher.on('ready', function() { console.log("start"); })
 	.on('add', function(path) {
     //[TODO] Create unique file name
+/*
     var writeStream = FS.createWriteStream('cvt_pdf.pdf');
     doc.pipe(writeStream);
     var img = doc.openImage(path);
@@ -97,12 +100,14 @@ print_watcher.on('ready', function() { console.log("start"); })
           })
       });
     });
+*/
     console.log("added file-> " + path);
   })
 	.on('addDir', function(path) { console.log("added dir-> " + path); })
 	.on('unlink', function(path) { console.log("removed file-> " + path); })
 	.on('unlinkDir', function(path) { console.log("removed dir-> " + path); })
 	.on('change', function(path) {
+/*
     var writeStream = FS.createWriteStream('cvt_pdf.pdf');
     doc.pipe(writeStream);
     var img = doc.openImage(path);
@@ -130,8 +135,9 @@ print_watcher.on('ready', function() { console.log("start"); })
               }
           })
       });
-    });
+*/
     console.log("modified-> " + path); })
+
 	.on('error', function(error) { console.log("error-> " + error); })
 
 
@@ -203,6 +209,16 @@ app.get('/' + URI_REFRESH_SCAN, function(req, res) {
   ])
 });
 
+app.get('/' + URI_EXEC_PRINT, function(req, res) {
+  //Execute printing out files under print Buffer
+  //get file list in the Buffer
+  glob(LOCAL_PRINT_BUFFER + "/*.jpg", function(err, files) {
+    if (err) throw err;
+    console.log(files);
+  })
+  res.sendStatus(200);
+});
+
 app.post('/' + URI_PRINT_BUFFER,  (req, res)  => {
     //console.log(req.body);
     console.log("received post request");
@@ -217,6 +233,7 @@ app.post('/' + URI_PRINT_BUFFER,  (req, res)  => {
             console.log(err)
         }else{
             console.log('saved');
+            res.sendStatus(200);
         }
     });
 });
@@ -264,17 +281,6 @@ var Webcam = NodeWebcam.create({
     saveShots: false,
     device: TMP_CAMERA_NAME_OSX
 });
-
-// function capture(callback) {
-//   //[TODO] Create unique filename
-//     Webcam.capture( "scanned_buffer/picture", function( err, data ) {
-//         if( err ) {
-//             throw err;
-//         }
-//         callback();
-//     });
-// }
-
 
 //Start Server
 http.listen(PORT, function(){

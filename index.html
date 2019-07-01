@@ -35,7 +35,7 @@
 
       //[TODO] http get > img source
       var xhr = new XMLHttpRequest();
-		  xhr.open('GET', 'http://localhost:80/scan/picture.jpg', true);
+		  xhr.open('GET', 'http://localhost:80/scanned_buffer/picture.jpg', true);
       xhr.onload = function(){
 
 			var response = xhr.responseText;
@@ -107,14 +107,14 @@
       var decodefile = window.atob(b64file.split(',')[1]);
       var content = dashdash+boundary+crlf+'Content-Disposition: form-data; name="file"; filename="picture.jpg"'+crlf+'Content-Type: image/jpeg'+crlf+crlf+decodefile+crlf+dashdash+boundary+dashdash+crlf;
 
-      xhr.open('POST', 'http://localhost:80/post');
+      xhr.open('POST', 'http://localhost:80/print_buffer');
 
       axios.defaults.headers.common = {
         'Content-Type': 'application/x-www-form-urlencoded'
       };
       axios({
   method: 'post',
-  url: 'http://localhost:80/post',
+  url: 'http://localhost:80/print_buffer',
   data: {
       pad: b64file
     }

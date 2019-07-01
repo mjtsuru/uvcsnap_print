@@ -105,6 +105,7 @@ After all the files in one "block" is put, please issue the HTTP GET Request to 
 If the client application runs locally, just put the image files to be printed out to **print_buffer** directory then issue the GET Request to **/exec_print** after the "block" of images are put like the previous section.
 
 * **URI**
+
   exec_print
 
 * **Method**

@@ -111,8 +111,9 @@ If the client application runs locally, just put the image files to be printed o
 * **Method**
   GET
 
-* **Success Response:** 200 OK
-
+* **Success Response:**
+  * **Code:** 200 OK
+  
 * **Error Response:** 500 INTERNALSERVERERROR
 
 ## Install

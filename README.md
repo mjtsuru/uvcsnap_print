@@ -82,21 +82,24 @@ HTTP GET Request to the URI **/refresh_scan** triggers the deletion of files und
   * **Code:** 500 INTERNALSERVERERROR
 
 ### 2. Print received images
-Expected user-case is that the application process the images and put it for the printing. Note that 1 to 6 images in certain intervals (called "block") are expected be printed out.
+The expected user-case is that the application processes images then puts them for the printing. Note that 1 to 6 images in certain intervals (called "block") are expected be printed out.
 #### 2-1. REST APIs
 The server accepts HTTP POST Request to the URI **/print_buffer** with the image file.
 After all the files in one "block" is put, please issue the HTTP GET Request to the URI **/exec_print** (works just as a command). It triggers the server to print all the images in the "block" then **print_buffer** is flushed.
 
 ##### 2-1-1
 * **URI**
+
   print_buffer
 
 * **Method**
   POST
 
-* **Success Response:** 200 OK
+* **Success Response:**
+  * **Code:** 200 OK
 
-* **Error Response:** TBD
+* **Error Response:**
+  * TBD
 
 #### 2-2. Use locally
 If the client application runs locally, just put the image files to be printed out to **print_buffer** directory then issue the GET Request to **/exec_print** after the "block" of images are put like the previous section.

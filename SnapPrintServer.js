@@ -216,6 +216,11 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
     if (err) throw err;
     console.log(files);
   })
+
+  // [TODO] Transform jpg to pdf then issue jobs to the printers.
+  // Monitor printer jobs and care
+
+  // response should be sent immediately
   res.sendStatus(200);
 });
 

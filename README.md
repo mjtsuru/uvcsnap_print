@@ -148,4 +148,12 @@ git clone https://github.com/mjtsuru/uvcsnap_print.git
 cd uvcsnap_print
 ```
 
-* **
+* **Try Server**  
+
+Start the server for the test.
+```
+node SnapPrintServer.js
+```
+
+A sample client is provided.  
+Access **http://localhost**

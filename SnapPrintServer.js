@@ -9,8 +9,8 @@
 //const TMP_CAMERA_NAME_OSX = "BUFFALO BSWHD06M USB Camera'$'\r\n";
 //const TMP_CAMERA_NAME_OSX = "FaceTime HD Camera";
 //const TMP_CAMERA_NAME_OSX = 'default';
-const TMP_CAMERA_NAME_OSX_1 = "MX-1";
-const TMP_CAMERA_NAME_OSX_2 = "MX-1 #2";
+const TMP_CAMERA_NAME_OSX_1 = 3;
+const TMP_CAMERA_NAME_OSX_2 = 4;
 
 const URI_SCANNED_BUFFER = "scanned_buffer";
 const URI_SCANNED_IMAGES = "scanned_images";
@@ -306,19 +306,21 @@ var NodeWebcam = require( "node-webcam" );
 var Webcam_1 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
-    width: 1280,
-    height: 720,
+    //width: 1280,
+    //height: 720,
     device: TMP_CAMERA_NAME_OSX_1,
-    verbose: true
+    output: "jpeg",
+    //verbose: true
 });
 
 var Webcam_2 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
-    width: 1280,
-    height: 720,
+    //width: 1920,
+    //height: 1080,
     device: TMP_CAMERA_NAME_OSX_2,
-    verbose: true
+    output: "jpeg"
+    //verbose: true
 });
 
 //Start Server

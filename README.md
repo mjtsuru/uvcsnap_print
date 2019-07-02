@@ -113,8 +113,39 @@ If the client application runs locally, just put the image files to be printed o
 
 * **Success Response:**
   * **Code:** 200 OK
-  
+
 * **Error Response:** 500 INTERNALSERVERERROR
 
 ## Install
-[TODO]
+*  **Install nvm.**  
+
+  On Windows  
+  https://qiita.com/akuden/items/a88630de9624039c4135
+
+* **Use node v8.10.0.**  
+```
+nvm install v8.10.0
+nvm use v8.10.0
+```
+Then Please confirm npm also works.
+```
+npm --version
+```
+
+* **Install node packages**
+```
+npm install node-webcam windows-build-tools printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path
+```
+
+* **Install git.**
+
+  On Windows  
+  https://git-scm.com/
+
+* **Clone this repo.**
+```
+git clone https://github.com/mjtsuru/uvcsnap_print.git
+cd uvcsnap_print
+```
+
+* **

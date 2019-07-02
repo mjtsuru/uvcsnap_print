@@ -7,12 +7,19 @@
 <body>
     <ul id="messages"></ul>
     <form>
-
-      <input type="button" value="scan" onclick="OnSendClick();"/>
+      <input type="button" value="device1" onclick="OnSendClickDev1();"/>
     </form>
     <div id="container">
 
-        <img id="img" width="300" height="300"></img>
+        <img id="img_dev1" width="300" height="300"></img>
+
+    </div>
+    <form>
+      <input type="button" value="device2" onclick="OnSendClickDev2();"/>
+    </form>
+    <div id="container">
+
+        <img id="img_dev2" width="300" height="300"></img>
 
     </div>
     <form>
@@ -29,13 +36,14 @@
   <script>
 　　　var socket = io();
 
-    socket.on('message', function(data, ack) {
-      console.log(data);
+    socket.on('message', function(msg, ack) {
+      console.log(msg);
+      var msg = JSON.parse(msg);
       ack('client ack for send');
 
       //[TODO] http get > img source
       var xhr = new XMLHttpRequest();
-		  xhr.open('GET', 'http://localhost:80/scanned_buffer/picture.jpg', true);
+		  xhr.open('GET', 'http://localhost:80/scanned_buffer/' + msg.filename, true);
       xhr.onload = function(){
 
 			var response = xhr.responseText;
@@ -43,9 +51,11 @@
 			for(i=0;i<response.length;i++){
 				binary += String.fromCharCode(response.charCodeAt(i) & 0xff);
 			}
-
-			img.src = 'data:image/jpeg;base64,' + btoa(binary);
-
+      if (msg.device == 1) {
+			     img_dev1.src = 'data:image/jpeg;base64,' + btoa(binary);
+      } else {
+			     img_dev2.src = 'data:image/jpeg;base64,' + btoa(binary);
+      }
 		}
 
 		xhr.overrideMimeType('text/plain; charset=x-user-defined');
@@ -60,9 +70,16 @@
       });
     };
 
-    function OnSendClick() {
-      console.log("click");
-      socket.send('scan', function onack(res) {
+    function OnSendClickDev1() {
+      console.log("sending dev1 scan msg");
+      socket.send('scan_device1',function onack(res) {
+        console.log(res);
+      });
+    };
+
+    function OnSendClickDev2() {
+      console.log("sending dev2 scan msg");
+      socket.send('scan_device2',function onack(res) {
         console.log(res);
       });
     };
@@ -74,7 +91,7 @@
       var canvas = document.getElementById("c1");
       var ctx = canvas.getContext("2d");
       var cvs = new Image();
-      cvs.src = img.src;
+      cvs.src = img_dev1.src;
       cvs.onload = function() {
         var dstWidth = canvas.width;
         var dstHeight = canvas.height;

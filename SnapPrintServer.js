@@ -7,9 +7,10 @@
 *
 */
 //const TMP_CAMERA_NAME_OSX = "BUFFALO BSWHD06M USB Camera'$'\r\n";
-const TMP_CAMERA_NAME_OSX = "FaceTime HD Camera";
+//const TMP_CAMERA_NAME_OSX = "FaceTime HD Camera";
 //const TMP_CAMERA_NAME_OSX = 'default';
-//TMP_CAMERA_NAME_OSX = "MX-1";
+const TMP_CAMERA_NAME_OSX_1 = "MX-1";
+const TMP_CAMERA_NAME_OSX_2 = "MX-1 #2";
 
 const URI_SCANNED_BUFFER = "scanned_buffer";
 const URI_SCANNED_IMAGES = "scanned_images";
@@ -255,20 +256,40 @@ io.on('connection',function(socket){
     });
 
     socket.on('message', function(data, ack) {
+      now = new Date();
+      var filename = date(now, 'yyyymmddHHMMssl');
+
       switch (data) {
-        case 'scan':
-          console.log('get picture');
-          //capture(ack('captured'));
-          now = new Date();
-          var filename = date(now, 'yyyymmddHHMMssl');
-          Webcam.capture( LOCAL_SCANNED_BUFFER + "/" + filename, function( err, data ) {
+        case 'scan_device1':
+          console.log('device1 scan');
+          Webcam_1.capture( LOCAL_SCANNED_BUFFER + "/" + filename, function( err, data ) {
               if( err ) {
                   throw err;
               }
               scanned_file_list.files.push(filename + ".jpg");
               console.log(JSON.stringify(scanned_file_list));
               ack('captured');
-              socket.send('data', function onack(res) {
+              var msg = new Object();
+              msg.device = 1;
+              msg.filename = filename + ".jpg";
+              socket.send(JSON.stringify(msg), function onack(res) {
+                console.log(res);
+              });
+          });
+        break;
+        case 'scan_device2':
+          console.log('device2 scan');
+          Webcam_2.capture( LOCAL_SCANNED_BUFFER + "/" + filename, function( err, data ) {
+              if( err ) {
+                  throw err;
+              }
+              scanned_file_list.files.push(filename + ".jpg");
+              console.log(JSON.stringify(scanned_file_list));
+              ack('captured');
+              var msg = new Object();
+              msg.device = 2;
+              msg.filename = filename + ".jpg";
+              socket.send(JSON.stringify(msg), function onack(res) {
                 console.log(res);
               });
           });
@@ -282,10 +303,22 @@ io.on('connection',function(socket){
 
 //Webcam usage
 var NodeWebcam = require( "node-webcam" );
-var Webcam = NodeWebcam.create({
+var Webcam_1 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
-    device: TMP_CAMERA_NAME_OSX
+    width: 1280,
+    height: 720,
+    device: TMP_CAMERA_NAME_OSX_1,
+    verbose: true
+});
+
+var Webcam_2 = NodeWebcam.create({
+    callbackReturn: "base64",
+    saveShots: false,
+    width: 1280,
+    height: 720,
+    device: TMP_CAMERA_NAME_OSX_2,
+    verbose: true
 });
 
 //Start Server

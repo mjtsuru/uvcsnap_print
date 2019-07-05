@@ -134,7 +134,8 @@ npm --version
 
 * **Install node packages**
 ```
-npm install node-webcam windows-build-tools printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path commander
+npm install windows-build-tools
+npm install node-webcam printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path commander
 ```
 
 * **Install git.**

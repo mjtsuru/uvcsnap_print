@@ -134,7 +134,7 @@ npm --version
 
 * **Install node packages**
 ```
-npm install node-webcam windows-build-tools printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path
+npm install node-webcam windows-build-tools printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path commander
 ```
 
 * **Install git.**
@@ -152,8 +152,8 @@ cd uvcsnap_print
 
 Start the server for the test.
 ```
-node SnapPrintServer.js
+node SnapPrintServer.js --cam1 3 --cam2 4
 ```
-
+Note that cam1 and cam2 options set the uvc camera device name (in Windows, these are numbers).  
 A sample client is provided.  
-Access **http://localhost**
+Please access **http://localhost** then you can take uvc snaps from buttons.

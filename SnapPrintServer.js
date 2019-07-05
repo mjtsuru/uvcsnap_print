@@ -6,11 +6,8 @@
 /*
 *
 */
-//const TMP_CAMERA_NAME_OSX = "BUFFALO BSWHD06M USB Camera'$'\r\n";
-//const TMP_CAMERA_NAME_OSX = "FaceTime HD Camera";
-//const TMP_CAMERA_NAME_OSX = 'default';
-const TMP_CAMERA_NAME_OSX_1 = 3;
-const TMP_CAMERA_NAME_OSX_2 = 4;
+var CAMERA_NAME_1 = 3;
+var CAMERA_NAME_2 = 4;
 
 const URI_SCANNED_BUFFER = "scanned_buffer";
 const URI_SCANNED_IMAGES = "scanned_images";
@@ -25,6 +22,7 @@ const LOCAL_PRINT_BUFFER = URI_PRINT_BUFFER;
 /*
 * Modules
 */
+var program = require('commander');
 // for async control
 const async = require('async');
 // for http server
@@ -50,6 +48,24 @@ const PDFDocument = require('pdfkit');
 const doc = new PDFDocument({autoFirstPage:false});
 var printer = require("printer"),
 pdfpath = require('path');
+
+//Command Arguments
+program
+  .option('--cam1 <text>')
+  .option('--cam2 <text>', 'Set uvc camera 2')
+  .parse(process.argv);
+
+var ops = program.opts();
+if (isNaN(parseInt(ops.cam1))) {
+  CAMERA_NAME_1 = ops.cam1;
+} else {
+  CAMERA_NAME_1 = parseInt(ops.cam1);
+}
+if (isNaN(parseInt(ops.cam2))) {
+  CAMERA_NAME_2 = ops.cam2;
+} else {
+  CAMERA_NAME_2 = parseInt(ops.cam2);
+}
 
 //Use chokidar
 var scan_watcher = chokidar.watch(LOCAL_SCANNED_BUFFER, {
@@ -308,7 +324,7 @@ var Webcam_1 = NodeWebcam.create({
     saveShots: false,
     //width: 1280,
     //height: 720,
-    device: TMP_CAMERA_NAME_OSX_1,
+    device: CAMERA_NAME_1,
     output: "jpeg",
     //verbose: true
 });
@@ -318,7 +334,7 @@ var Webcam_2 = NodeWebcam.create({
     saveShots: false,
     //width: 1920,
     //height: 1080,
-    device: TMP_CAMERA_NAME_OSX_2,
+    device: CAMERA_NAME_2,
     output: "jpeg"
     //verbose: true
 });

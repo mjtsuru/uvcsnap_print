@@ -19,6 +19,9 @@ https://www.npmjs.com/package/node-webcam
 node-printer (Printer)  
 https://github.com/tojocky/node-printer  
 
+jimp (Image Processing)
+https://github.com/oliver-moran/jimp  
+
 socket.io (messaging option)  
 https://github.com/socketio/socket.io
 
@@ -135,7 +138,7 @@ npm --version
 * **Install node packages**
 ```
 npm install windows-build-tools
-npm install node-webcam printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path commander
+npm install node-webcam printer async fs glob express body-parser multer socket.io chokidar dateformat pdfkit path commander jimp
 ```
 
 * **Install git.**

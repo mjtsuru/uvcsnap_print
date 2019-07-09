@@ -88,7 +88,7 @@ scan_watcher.on('ready', function() { console.log("start watching " + LOCAL_SCAN
 print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRINT_BUFFER); })
 	.on('add', function(path) {
     //[TODO] Create unique file name
-/*
+
     var writeStream = FS.createWriteStream('cvt_pdf.pdf');
     doc.pipe(writeStream);
     var img = doc.openImage(path);
@@ -105,19 +105,19 @@ print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRI
           return;
         }
         console.log('data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
-          printer.printDirect({
-              data: data,
-              type: 'PDF',
-              success: function(id) {
-                  console.log('printed with id ' + id);
-              },
-              error: function(err) {
-                  console.error('error on printing: ' + err);
-              }
-          })
+          // printer.printDirect({
+          //     data: data,
+          //     type: 'PDF',
+          //     success: function(id) {
+          //         console.log('printed with id ' + id);
+          //     },
+          //     error: function(err) {
+          //         console.error('error on printing: ' + err);
+          //     }
+          // })
       });
     });
-*/
+
     console.log("added file-> " + path);
   })
 	.on('addDir', function(path) { console.log("added dir-> " + path); })
@@ -278,35 +278,31 @@ io.on('connection',function(socket){
       switch (data) {
         case 'scan_device1':
           console.log('device1 scan');
-          Webcam_1.capture( LOCAL_SCANNED_BUFFER + "/" + filename, function( err, data ) {
+          Webcam_1.capture( 'tmp1', function( err, data ) {
               if( err ) {
                   throw err;
               }
-              scanned_file_list.files.push(filename + ".jpg");
-              console.log(JSON.stringify(scanned_file_list));
-              ack('captured');
-              var msg = new Object();
-              msg.device = 1;
-              msg.filename = filename + ".jpg";
-              socket.send(JSON.stringify(msg), function onack(res) {
-                console.log(res);
+              Jimp.read('tmp1.bmp', (err, func) => {
+                if (err) throw err;
+                func
+                  .crop(0, 0, 1115, 720)
+                  .rotate(-90)
+                  .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 1));
               });
           });
         break;
         case 'scan_device2':
           console.log('device2 scan');
-          Webcam_2.capture( LOCAL_SCANNED_BUFFER + "/" + filename, function( err, data ) {
+          Webcam_2.capture('tmp2', function( err, data ) {
               if( err ) {
                   throw err;
               }
-              scanned_file_list.files.push(filename + ".jpg");
-              console.log(JSON.stringify(scanned_file_list));
-              ack('captured');
-              var msg = new Object();
-              msg.device = 2;
-              msg.filename = filename + ".jpg";
-              socket.send(JSON.stringify(msg), function onack(res) {
-                console.log(res);
+              Jimp.read('tmp2.bmp', (err, func) => {
+                if (err) throw err;
+                func
+                  .crop(0, 0, 1115, 720)
+                  .rotate(-90)
+                  .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
               });
           });
         break;
@@ -316,27 +312,34 @@ io.on('connection',function(socket){
     });
 });
 
+//Responding after image processing is finished
+function jimpwritecallback(socket, ack, filename, device) {
+  scanned_file_list.files.push(filename + ".jpg");
+  console.log(JSON.stringify(scanned_file_list));
+  ack('captured');
+  var msg = new Object();
+  msg.device = device;
+  msg.filename = filename + ".jpg";
+  socket.send(JSON.stringify(msg), function onack(res) {
+    console.log(res);
+  });
+}
 
 //Webcam usage
 var NodeWebcam = require( "node-webcam" );
+//image processing
+var Jimp = require("jimp");
+
 var Webcam_1 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
-    //width: 1280,
-    //height: 720,
     device: CAMERA_NAME_1,
-    output: "jpeg",
-    //verbose: true
 });
 
 var Webcam_2 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
-    //width: 1920,
-    //height: 1080,
     device: CAMERA_NAME_2,
-    output: "jpeg"
-    //verbose: true
 });
 
 //Start Server

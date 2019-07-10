@@ -19,11 +19,14 @@ https://www.npmjs.com/package/node-webcam
 node-printer (Printer)  
 https://github.com/tojocky/node-printer  
 
-jimp (Image Processing)
+jimp (Image Processing)  
 https://github.com/oliver-moran/jimp  
 
 socket.io (messaging option)  
-https://github.com/socketio/socket.io
+https://github.com/socketio/socket.io  
+
+**(OSX Only)** imagesnap  
+https://github.com/rharder/imagesnap  
 
 ## Usage
 
@@ -135,6 +138,11 @@ Then Please confirm npm also works.
 npm --version
 ```
 
+* ***(OSX Only)*** **Install imagesnap**  
+```
+brew install imagesnap
+```
+
 * **Install node packages**
 ```
 npm install windows-build-tools
@@ -159,5 +167,15 @@ Start the server for the test.
 node SnapPrintServer.js --cam1 3 --cam2 4
 ```
 Note that cam1 and cam2 options set the uvc camera device name (in Windows, these are numbers).  
+
+* In OSX, know the name of your uvc cameras by imagesnap.  
+```
+imagesnap -ls
+```  
+Then set the cam1 and cam2 options with the name like below.
+```
+node SnapPrintServer.js --cam1 'FaceTime HD Camera' --cam2 'FaceTime HD Camera'  
+```
+
 A sample client is provided.  
 Please access **http://localhost** then you can take uvc snaps from buttons.

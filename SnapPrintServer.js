@@ -334,12 +334,14 @@ var Webcam_1 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
     device: CAMERA_NAME_1,
+    output: "bmp",
 });
 
 var Webcam_2 = NodeWebcam.create({
     callbackReturn: "base64",
     saveShots: false,
     device: CAMERA_NAME_2,
+    output: "bmp",
 });
 
 //Start Server

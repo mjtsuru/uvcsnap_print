@@ -271,7 +271,16 @@ io.on('connection',function(socket){
       ack('ack for emit');
     });
 
+    socket.on('test', function(data, ack) {
+      console.log(data);
+      socket.send('hello from SnapPrintServer');
+      now = new Date();
+      socket.emit('date', date(now, 'yyyymmddHHMMssl'));
+    });
+
     socket.on('message', function(data, ack) {
+      console.log(data);
+
       now = new Date();
       var filename = date(now, 'yyyymmddHHMMssl');
 

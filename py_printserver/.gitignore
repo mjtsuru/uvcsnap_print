@@ -1,3 +1,4 @@
 !.gitignore
 *.jpg
+*.pyc
 .DS_Store

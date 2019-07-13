@@ -89,22 +89,22 @@ print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRI
 	.on('add', function(path) {
     //[TODO] Create unique file name
 
-    var writeStream = FS.createWriteStream('cvt_pdf.pdf');
-    doc.pipe(writeStream);
-    var img = doc.openImage(path);
-    doc.addPage({size: [img.width, img.height]});
-    doc.image(img, 0, 0);
-    doc.end();
-    writeStream.on('finish', function () {
-      var filename = pdfpath.resolve(process.cwd(), 'cvt_pdf.pdf');
-      console.log('printing file name ' + filename);
-
-      FS.readFile(filename, function(err, data){
-        if(err) {
-          console.error('err:' + err);
-          return;
-        }
-        console.log('data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
+    // var writeStream = FS.createWriteStream('cvt_pdf.pdf');
+    // doc.pipe(writeStream);
+    // var img = doc.openImage(path);
+    // doc.addPage({size: [img.width, img.height]});
+    // doc.image(img, 0, 0);
+    // doc.end();
+    // writeStream.on('finish', function () {
+    //   var filename = pdfpath.resolve(process.cwd(), 'cvt_pdf.pdf');
+    //   console.log('printing file name ' + filename);
+    //
+    //   FS.readFile(filename, function(err, data){
+    //     if(err) {
+    //       console.error('err:' + err);
+    //       return;
+    //     }
+    //     console.log('data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
           // printer.printDirect({
           //     data: data,
           //     type: 'PDF',
@@ -115,8 +115,8 @@ print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRI
           //         console.error('error on printing: ' + err);
           //     }
           // })
-      });
-    });
+    //   });
+    // });
 
     console.log("added file-> " + path);
   })
@@ -230,15 +230,17 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
   //Execute printing out files under print Buffer
   //get file list in the Buffer
   glob(LOCAL_PRINT_BUFFER + "/*.jpg", function(err, files) {
-    if (err) throw err;
-    console.log(files);
-  })
+    if (err) {
+      res.sendStatus(500);
+      throw err;
+    }
+    var printfile_list = new Object();
+    printfile_list.list = files;
 
-  // [TODO] Transform jpg to pdf then issue jobs to the printers.
-  // Monitor printer jobs and care
+    console.log(JSON.stringify(printfile_list));
+  });
 
-  // response should be sent immediately.
-  // Now responding with Internal Server Error.
+
   res.sendStatus(500);
 });
 

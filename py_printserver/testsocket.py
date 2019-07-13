@@ -1,5 +1,7 @@
 from socketIO_client_nexus import SocketIO, LoggingNamespace
+import printer
 
+#Handler Functions
 def on_connect():
     print('connect')
     socketIO.send({'val':'test'})
@@ -16,6 +18,18 @@ def on_date_response(*args):
 
 def on_message_response(*args):
     print('received message', args)
+
+def execPrint(filename):
+    printer.execPrint(filename)
+
+#Processes
+print(printer.getPrinterName())
+print('start print')
+execPrint('rental_temp4_chitto.png')
+print('finished execPrint Func 1')
+execPrint('rental_temp4_momoko.png')
+print('finished execPrint Func 2')
+print('finished print')
 
 socketIO = SocketIO('localhost', 80, LoggingNamespace)
 socketIO.on('connect', on_connect)

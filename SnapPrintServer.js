@@ -48,6 +48,9 @@ const PDFDocument = require('pdfkit');
 const doc = new PDFDocument({autoFirstPage:false});
 var printer = require("printer"),
 pdfpath = require('path');
+  //Use Python script for windows
+const spawn = require('child_process').spawn;
+const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
 
 //Command Arguments
 program
@@ -87,72 +90,12 @@ scan_watcher.on('ready', function() { console.log("start watching " + LOCAL_SCAN
 
 print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRINT_BUFFER); })
 	.on('add', function(path) {
-    //[TODO] Create unique file name
-
-    // var writeStream = FS.createWriteStream('cvt_pdf.pdf');
-    // doc.pipe(writeStream);
-    // var img = doc.openImage(path);
-    // doc.addPage({size: [img.width, img.height]});
-    // doc.image(img, 0, 0);
-    // doc.end();
-    // writeStream.on('finish', function () {
-    //   var filename = pdfpath.resolve(process.cwd(), 'cvt_pdf.pdf');
-    //   console.log('printing file name ' + filename);
-    //
-    //   FS.readFile(filename, function(err, data){
-    //     if(err) {
-    //       console.error('err:' + err);
-    //       return;
-    //     }
-    //     console.log('data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
-          // printer.printDirect({
-          //     data: data,
-          //     type: 'PDF',
-          //     success: function(id) {
-          //         console.log('printed with id ' + id);
-          //     },
-          //     error: function(err) {
-          //         console.error('error on printing: ' + err);
-          //     }
-          // })
-    //   });
-    // });
-
     console.log("added file-> " + path);
   })
 	.on('addDir', function(path) { console.log("added dir-> " + path); })
 	.on('unlink', function(path) { console.log("removed file-> " + path); })
 	.on('unlinkDir', function(path) { console.log("removed dir-> " + path); })
 	.on('change', function(path) {
-/*
-    var writeStream = FS.createWriteStream('cvt_pdf.pdf');
-    doc.pipe(writeStream);
-    var img = doc.openImage(path);
-    doc.addPage({size: [img.width, img.height]});
-    doc.image(img, 0, 0);
-    doc.end();
-    writeStream.on('finish', function () {
-      var filename = pdfpath.resolve(process.cwd(), 'cvt_pdf.pdf');
-      console.log('printing file name ' + filename);
-
-      FS.readFile(filename, function(err, data){
-        if(err) {
-          console.error('err:' + err);
-          return;
-        }
-        console.log('data type is: '+typeof(data) + ', is buffer: ' + Buffer.isBuffer(data));
-          printer.printDirect({
-              data: data,
-              type: 'PDF',
-              success: function(id) {
-                  console.log('printed with id ' + id);
-              },
-              error: function(err) {
-                  console.error('error on printing: ' + err);
-              }
-          })
-      });
-*/
     console.log("modified-> " + path); })
 
 	.on('error', function(error) { console.log("error-> " + error); })
@@ -236,12 +179,25 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
     }
     var printfile_list = new Object();
     printfile_list.list = files;
+    //[TODO] Handle when no files are under the print buffer
+    console.log("printing :" + printfile_list.list);
 
-    console.log(JSON.stringify(printfile_list));
+    //ask python script for printing
+    const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
+    scriptExecution.stdout.on('data', (data) => {
+        console.log(String.fromCharCode.apply(null, data));
+        async.each(printfile_list.list, function(i, cb_each) {
+          console.log("removing file: " + i);
+          FS.unlink(i, (err) => {
+            if (err) throw err;
+            cb_each(null);
+          });
+        });
+    });
+    scriptExecution.stdin.write(JSON.stringify(printfile_list));
+    scriptExecution.stdin.end();
   });
-
-
-  res.sendStatus(500);
+  res.sendStatus(200);
 });
 
 app.post('/' + URI_PRINT_BUFFER,  (req, res)  => {

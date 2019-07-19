@@ -1,4 +1,4 @@
 !.gitignore
-.DS_Store
-*.bmp
+*.jpg
 *.pyc
+.DS_Store

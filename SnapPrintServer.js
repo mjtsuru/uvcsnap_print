@@ -19,6 +19,12 @@ const LOCAL_SCANNED_BUFFER = URI_SCANNED_BUFFER;
 const LOCAL_SCANNED_IMAGES = URI_SCANNED_IMAGES;
 const LOCAL_PRINT_BUFFER = URI_PRINT_BUFFER;
 
+const APP_RECEPTION = 'r';
+const APP_PLAYGROUND = 'p';
+var APP_SELECT = APP_RECEPTION;
+
+const CROPSIZE_W = 720;
+const CROPSIZE_H = 1115;
 /*
 * Modules
 */
@@ -56,18 +62,44 @@ const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
 program
   .option('--cam1 <text>')
   .option('--cam2 <text>', 'Set uvc camera 2')
+  .option('--app <text>')
   .parse(process.argv);
 
+//Parse args
 var ops = program.opts();
 if (isNaN(parseInt(ops.cam1))) {
   CAMERA_NAME_1 = ops.cam1;
 } else {
   CAMERA_NAME_1 = parseInt(ops.cam1);
 }
+
 if (isNaN(parseInt(ops.cam2))) {
   CAMERA_NAME_2 = ops.cam2;
 } else {
   CAMERA_NAME_2 = parseInt(ops.cam2);
+}
+
+if (isNaN(parseInt(ops.app))) {
+  if (ops.app == APP_RECEPTION) {
+    APP_SELECT = ops.app;
+    console.log('Working for Reception app');
+  } else if (ops.app == APP_PLAYGROUND) {
+    APP_SELECT = ops.app;
+    console.log('Working for Playground app');
+  } else {
+    console.log("app option error. default app is selected");
+  }
+} else {
+  var whichapp = parseInt(ops.app);
+  if (whichapp == 0) {
+    APP_SELECT = APP_RECEPTION;
+    console.log('Working for Reception app');
+  } else if (whichapp == 1) {
+    APP_SELECT = APP_PLAYGROUND;
+    console.log('Working for Playground app');
+  } else {
+    console.log("app option error. default app is selected");
+  }
 }
 
 //Use chokidar
@@ -114,6 +146,7 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
+app.use(express.static('/'));
 app.use(express.static('.'));
 //To Provide scanned file list
 app.use(express.static(URI_SCAN_LIST));
@@ -123,8 +156,12 @@ app.use(express.static(URI_SCANNED_IMAGES));
 app.use(bodyParser.json()) // for parsing application/x-www-form-urlencoded
 
 app.get('/' , function(req, res){
-    console.log('get req');
-    res.sendFile(__dirname+'/index.html');
+    console.log('Webapp opened');
+    if (APP_SELECT == APP_RECEPTION) {
+      res.sendFile(__dirname+'/reception.html');
+    } else {
+      res.sendFile(__dirname+'/playground.html');
+    }
 });
 
 app.get('/' + URI_SCAN_LIST , function(req, res){
@@ -143,6 +180,11 @@ app.get('/' + URI_SCAN_LIST , function(req, res){
       (cb) => {
         console.log("staging finished");
         res.send(JSON.stringify(scanned_file_list));
+        var msg = new Object();
+        msg.refresh = true;
+        my_socket.send(JSON.stringify(msg),function onack(res) {
+          console.log(res);
+        });
       },
     ]);
 });
@@ -220,7 +262,9 @@ app.post('/' + URI_PRINT_BUFFER,  (req, res)  => {
 });
 
 //socket.io messaging
+var my_socket;
 io.on('connection',function(socket){
+  my_socket = socket;
     console.log('connected');
 
     socket.on('msg', function(data, ack) {
@@ -229,16 +273,32 @@ io.on('connection',function(socket){
       ack('ack for emit');
     });
 
-    socket.on('test', function(data, ack) {
-      console.log(data);
-      socket.send('hello from SnapPrintServer');
-      now = new Date();
-      socket.emit('date', date(now, 'yyyymmddHHMMssl'));
+    socket.on('rem_buf', function(data, ack) {
+      console.log('remove buffer: ' + data);
+      if (data != null) {
+        FS.unlink(URI_SCANNED_BUFFER + "/" + data, (err) => {
+          if (err) throw err;
+        });
+        scanned_file_list.files.some(function(v, i){
+          if (v==data) scanned_file_list.files.splice(i,1);
+        });
+        console.log(scanned_file_list);
+
+        ack('remove done');
+      } else {
+        ack('nothing to remove');
+      }
     });
 
-    socket.on('message', function(data, ack) {
-      console.log(data);
+    socket.on('stage_buf', function(data, ack) {
+      console.log('staging: ' + data);
+      if (data != null) {
+        FS.renameSync(LOCAL_SCANNED_BUFFER + "/" + data, LOCAL_SCANNED_IMAGES + "/" + data);
+        ack('staging done');
+      }
+    })
 
+    socket.on('message', function(data, ack) {
       now = new Date();
       var filename = date(now, 'yyyymmddHHMMssl');
 
@@ -252,8 +312,8 @@ io.on('connection',function(socket){
               Jimp.read('tmp1.bmp', (err, func) => {
                 if (err) throw err;
                 func
-                  .crop(0, 0, 1115, 720)
                   .rotate(-90)
+                  .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
                   .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 1));
               });
           });

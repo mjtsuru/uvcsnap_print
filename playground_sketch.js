@@ -89,10 +89,10 @@ var sketchBack = function(p) {
 
     if (keyState != KEY_STATE_BUSY) {
       if (p.keyIsPressed) {
-        if (p.key == 'a') {
+        if (p.key == 'a' || p.key == 's' || p.key == 'd' || p.key == 'f' || p.key == 'g' ) {
           keyState = KEY_STATE_BUSY;
           OnSendClickDev1(p);
-        } else if (p.key == 'l') {
+        } else if (p.key == 'j' || p.key == 'k' || p.key == 'l' || p.key == ';') {
           keyState = KEY_STATE_BUSY;
           OnSendClickDev2(p);
         }

@@ -80,7 +80,7 @@ def execPrint(file_name):
     # x2 = x1 + scaled_width
     # y2 = y1 + scaled_height
     x1 = 174
-    y1 = -50
+    y1 = 0
     x2 = 4548
     y2 = 6774
     print("bmp.size ", bmp.size)

@@ -58,8 +58,10 @@ var img_slot_names = new Array(IMG_NUMBER);
 
 KEY_STATE_IDLE = 0;
 KEY_STATE_BUSY = 1;
-var keyState = KEY_STATE_IDLE;
-
+var keyState_Cam1 = KEY_STATE_IDLE;
+var keyState_Cam2 = KEY_STATE_IDLE;
+var cam1Key = ['q','w','e','r','t','a','s','d','f','z','x','c','v'];
+var cam2Key = ['u','i','o','p','@','j','k','l',';',':','n','m',',','.','/'];
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_y.png');
   var w = SCAN_IMG_W / SCAN_IMG_DIV;
@@ -87,16 +89,21 @@ var sketchBack = function(p) {
       p.image(img_slot[i], SCAN_IMG_X_ZERO + SCAN_IMG_X_PADDING * i, SCAN_IMG_Y_ZERO, w, h);
     }
 
-    if (keyState != KEY_STATE_BUSY) {
-      if (p.keyIsPressed) {
-        if (p.key == 'a') {
-          keyState = KEY_STATE_BUSY;
-          OnSendClickDev1(p);
-        } else if (p.key == 'l') {
-          keyState = KEY_STATE_BUSY;
-          OnSendClickDev2(p);
+    if (p.keyIsPressed) {
+        console.log(p.keyCode);
+        //if (p.key == 'a' || p.key == 's' || p.key == 'd' || p.key == 'f' || p.key == 'g' ) {
+        if (cam1Key.indexOf(p.key) >= 0) {
+          if (keyState_Cam1 != KEY_STATE_BUSY) {
+            keyState_Cam1 = KEY_STATE_BUSY;
+            OnSendClickDev1(p);
+          }
+//        } else if (p.key == 'j' || p.key == 'k' || p.key == 'l' || p.key == ';') {
+        } else if (cam2Key.indexOf(p.key) >= 0) {
+          if (keyState_Cam2 != KEY_STATE_BUSY) {
+            keyState_Cam2 = KEY_STATE_BUSY;
+            OnSendClickDev2(p);
+          }
         }
-      }
     }
   };
 }
@@ -108,7 +115,11 @@ var task = function(p) {
     var msg = JSON.parse(msg);
 
     if (msg.device) {
-      keyState = KEY_STATE_IDLE;
+      if (msg.device == 1) {
+        keyState_Cam1 = KEY_STATE_IDLE;
+      } else {
+        keyState_Cam2 = KEY_STATE_IDLE;
+      }
       for (var i = 0; i < img_slot_names.length; i++) {
         if (img_slot_names[i] == "doing") {
           img_slot[i] = p.loadImage("scanned_buffer/" + msg.filename);
@@ -406,7 +417,7 @@ function OnSendClickDev1(p) {
     if (img_slot_names[i] == null || img_slot_names[i] == undefined) {
       if (song.isPlaying()) {
         // .isPlaying() returns a boolean
-        song.stop();
+        //song.stop();
       } else {
         song.play();
       }
@@ -429,7 +440,7 @@ function OnSendClickDev2(p) {
     if (img_slot_names[i] == null || img_slot_names[i] == undefined) {
       if (song.isPlaying()) {
         // .isPlaying() returns a boolean
-        song.stop();
+        //song.stop();
       } else {
         song.play();
       }

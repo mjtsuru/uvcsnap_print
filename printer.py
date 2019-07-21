@@ -13,7 +13,7 @@ VERTRES = 10
 #
 # LOGPIXELS = dots per inch
 #
-LOGPIXELSX = 88
+LOGPIXELSX = 80
 LOGPIXELSY = 90
 #
 # PHYSICALWIDTH/HEIGHT = total area
@@ -74,6 +74,12 @@ def execPrint(file_name):
     y1 = int ((printer_size[1] - scaled_height) / 2)
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
+
+    x1 = 15
+    y1 = 0
+    x2 = 4722
+    y2 = 6874
+
     dib.draw (hDC.GetHandleOutput (), (x1, y1, x2, y2))
 
     hDC.EndPage ()

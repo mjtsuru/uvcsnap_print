@@ -326,12 +326,18 @@ io.on('connection',function(socket){
               }
               Jimp.read('tmp2.bmp', (err, func) => {
                 if (err) throw err;
-                func
-                  .rotate(-90)
-//                  .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
-                  .crop(0, 0, 1080, 1673)
-                  .resize(720, 1115)
-                  .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
+                if (APP_SELECT == APP_RECEPTION) {
+                  func
+                    .rotate(-90)
+                    .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
+                    .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
+                } else {
+                  func
+                    .rotate(-90)
+                    .crop(0, 0, 1080, 1673)
+                    .resize(720, 1115)
+                    .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
+                }
               });
           });
         break;

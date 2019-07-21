@@ -27,6 +27,8 @@ CANVAS_MARGIN = 20;
 
 var tint_val_scan1 = 255;
 var tint_val_scan2 = 255;
+var tint_val_scan1_right = 255;
+var tint_val_scan2_right = 255;
 
 var img_scan1_src;
 SCAN1_STATUS_OK = 0;
@@ -81,6 +83,9 @@ KEY_STATE_IDLE = 0;
 KEY_STATE_BUSY = 1;
 var keyLeftState = KEY_STATE_IDLE;
 var keyRightState = KEY_STATE_IDLE;
+var cam1Key = ['q','w','e','r','t','a','s','d','f','z','x','c','v'];
+var cam2Key = ['u','i','o','p','@','j','k','l',';',':','n','m',',','.','/'];
+
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_g.png');
   p.setup = function() {
@@ -92,8 +97,8 @@ var sketchBack = function(p) {
   p.draw = function() {
     p.image(img_back, 0, 0, CANVAS_BACK_W / 2, CANVAS_BACK_H / 2);
     if (p.keyIsPressed) {
-      if (keyLeftState != KEY_STATE_BUSY) {
-        if (p.key == 'a') {
+      if (cam1Key.indexOf(p.key) >= 0) {
+        if (keyLeftState != KEY_STATE_BUSY) {
           keyLeftState = KEY_STATE_BUSY;
           if (scan1_status == SCAN1_STATUS_OK) {
             OnSendClickDev1();
@@ -102,18 +107,38 @@ var sketchBack = function(p) {
             OnConfirmDev1();
           }
         }
-      }
-      if (keyRightState != KEY_STATE_BUSY) {
-        if (p.key == 'l') {
-          keyRightState = KEY_STATE_BUSY;
-          if (scan2_status == SCAN2_STATUS_OK) {
-            OnSendClickDev2();
-          } else if (scan2_status == SCAN2_STATUS_BATSU) {
-            console.log('confirmation');
-            OnConfirmDev2();
-          }
+      } else if (cam2Key.indexOf(p.key) >= 0) {
+        keyRightState = KEY_STATE_BUSY;
+        if (scan2_status == SCAN2_STATUS_OK) {
+          OnSendClickDev2();
+        } else if (scan2_status == SCAN2_STATUS_BATSU) {
+          console.log('confirmation');
+          OnConfirmDev2();
         }
       }
+
+      // if (keyLeftState != KEY_STATE_BUSY) {
+      //   if (p.key == 'a') {
+      //     keyLeftState = KEY_STATE_BUSY;
+      //     if (scan1_status == SCAN1_STATUS_OK) {
+      //       OnSendClickDev1();
+      //     } else if (scan1_status == SCAN1_STATUS_BATSU) {
+      //       console.log('confirmation');
+      //       OnConfirmDev1();
+      //     }
+      //   }
+      // }
+      // if (keyRightState != KEY_STATE_BUSY) {
+      //   if (p.key == 'l') {
+      //     keyRightState = KEY_STATE_BUSY;
+      //     if (scan2_status == SCAN2_STATUS_OK) {
+      //       OnSendClickDev2();
+      //     } else if (scan2_status == SCAN2_STATUS_BATSU) {
+      //       console.log('confirmation');
+      //       OnConfirmDev2();
+      //     }
+      //   }
+      // }
     }
   };
 }
@@ -244,26 +269,27 @@ var sketch1_status_right = function(p) {
       //img_left_size = STATUS_W;
       //img_1_status_left = p.loadImage('data/batsu_g2.png');
       console.log('change status1 img to NEXT');
+      console.log('set status1 right back white');
       img_1_status_right = p.loadImage('data/next_g.png');
       //console.log('scan1_status to loaded');
     //  p.image(img_1_status_right, 0, 0, STATUS_W, STATUS_H);
     } else if (scan1_status == SCAN1_STATUS_LOADED) {
       if (scan1_status_change_done == 0) {
         console.log('change status1 img to NEXT');
-        //p.background(0, 0, 0, 0);
+        console.log('set status1 right back white');
         img_1_status_right = p.loadImage('data/next_g.png');
 //        p.image(img_1_status_right, STATUS_W, 0, STATUS_W, STATUS_H);
       }
     } else if (scan1_status == SCAN1_STATUS_OK) {
       if (scan1_status_change_done == 3) {
         console.log('hikitsugi to transparent');
-        //p.background(255, 255, 255, 126);
         img_1_status_right = p.loadImage('data/trans_g2.png');
         scan1_status_change_done = 2;
         //p.image(img_1_status_right, 0, 0, STATUS_W, STATUS_H);
       }
     }
-//    p.tint(tint_val_scan1, tint_val_scan1);
+    p.background(255,255,255,255);
+    p.tint(255,255,255,tint_val_scan1_right);
     p.image(img_1_status_right, 0, 0, STATUS_W, STATUS_H);
 
   }
@@ -394,7 +420,8 @@ var sketch2_status_right = function(p) {
         //p.image(img_2_status_right, 0, 0, STATUS_W, STATUS_H);
       }
     }
-    //p.tint(tint_val_scan2, tint_val_scan2);
+    p.background(255,255,255,255);
+    p.tint(255,255,255,tint_val_scan2_right);
     p.image(img_2_status_right, 0, 0, STATUS_W, STATUS_H);
 
   }
@@ -423,14 +450,14 @@ function OnSendClickDev1() {
   } else {
     scan1_status = SCAN1_STATUS_DOING;
     scan1_status_change_done = 0;
-    if (song.isPlaying()) {
-      // .isPlaying() returns a boolean
-      song.stop();
-
-    } else {
+    // if (song.isPlaying()) {
+    //    .isPlaying() returns a boolean
+    //   song.stop();
+    //
+    // } else {
       song.play();
 
-    }
+    // }
 
     socket.send('scan_device1',function onack(res) {
       console.log(res);
@@ -440,12 +467,12 @@ function OnSendClickDev1() {
 
 function Status1Right_Selected() {
   console.log("Status1Right mouse over");
-  //tint_val_scan1 = 127;
+  tint_val_scan1_right = 64;
 }
 
 function Status1Right_Diselected() {
   console.log("Status1Right mouse out");
-  //tint_val_scan1 = 255;
+  tint_val_scan1_right = 255;
 }
 
 
@@ -470,14 +497,14 @@ function OnSendClickDev2() {
   } else {
     scan2_status = SCAN2_STATUS_DOING;
     scan2_status_change_done = 0;
-    if (song.isPlaying()) {
-      // .isPlaying() returns a boolean
-      song.stop();
-
-    } else {
+    // if (song.isPlaying()) {
+    //   // .isPlaying() returns a boolean
+    //   song.stop();
+    //
+    // } else {
       song.play();
 
-    }
+    // }
 
     socket.send('scan_device2',function onack(res) {
       console.log(res);
@@ -488,12 +515,12 @@ function OnSendClickDev2() {
 
 function Status2Right_Selected() {
   console.log("Status2 mouse over");
-  //tint_val_scan2 = 127;
+  tint_val_scan2_right = 127;
 }
 
 function Status2Right_Diselected() {
   console.log("Status2 mouse out");
-  //tint_val_scan2 = 255;
+  tint_val_scan2_right = 255;
 }
 
 function OnImageDev2_OK() {
@@ -520,5 +547,5 @@ new p5(sketch2, "container1");
 new p5(sketchBack, "container2");
 new p5(sketch1_status_right, "container3");
 new p5(sketch1_status_left, "container4");
-new p5(sketch2_status_left, "container5");
-new p5(sketch2_status_right, "container6");
+new p5(sketch2_status_right, "container5");
+new p5(sketch2_status_left, "container6");

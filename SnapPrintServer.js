@@ -19,12 +19,22 @@ const LOCAL_SCANNED_BUFFER = URI_SCANNED_BUFFER;
 const LOCAL_SCANNED_IMAGES = URI_SCANNED_IMAGES;
 const LOCAL_PRINT_BUFFER = URI_PRINT_BUFFER;
 
+const PRINT_BUFFER_FULLPATH_WIN = "C:/Users/neologue-vaio/workspace/aitri2019/uvcsnap_print/" + URI_PRINT_BUFFER;
+
 const APP_RECEPTION = 'r';
 const APP_PLAYGROUND = 'p';
 var APP_SELECT = APP_RECEPTION;
 
 const CROPSIZE_W = 720;
 const CROPSIZE_H = 1115;
+
+/*
+* OS judge
+*/
+const is_windows = process.platform==='win32'
+const is_mac = process.platform==='darwin'
+const is_linux = process.platform==='linux'
+
 /*
 * Modules
 */
@@ -36,6 +46,7 @@ var HTTP = require( "http" );
 var FS = require( "fs" );
 var glob = require("glob");
 var express = require('express');
+const morgan = require('morgan');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var app = express();
@@ -53,10 +64,9 @@ var now = new Date();
 const PDFDocument = require('pdfkit');
 const doc = new PDFDocument({autoFirstPage:false});
 var printer = require("printer"),
-pdfpath = require('path');
+path = require('path');
   //Use Python script for windows
 const spawn = require('child_process').spawn;
-const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
 
 //Command Arguments
 program
@@ -137,6 +147,7 @@ print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRI
 //filelist
 var scanned_file_list = new Object();
 scanned_file_list.files = [];
+scanned_file_list.savedir = path.resolve(PRINT_BUFFER_FULLPATH_WIN);
 
 var storage = multer.diskStorage({
   destination: './' + LOCAL_PRINT_BUFFER,
@@ -146,6 +157,7 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 
+//app.use(morgan('combined'));
 app.use(express.static('/'));
 app.use(express.static('.'));
 //To Provide scanned file list
@@ -225,7 +237,11 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
     console.log("printing :" + printfile_list.list);
 
     //ask python script for printing
-    const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
+    if (is_windows) {
+      const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
+    } else {
+      const scriptExecution = spawn("python", ["test_pythonshell.py"]);
+    }
     scriptExecution.stdout.on('data', (data) => {
         console.log(String.fromCharCode.apply(null, data));
         async.each(printfile_list.list, function(i, cb_each) {

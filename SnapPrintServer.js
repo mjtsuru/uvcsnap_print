@@ -184,7 +184,11 @@ app.get('/' + URI_SCAN_LIST , function(req, res){
       (cb) => {
         async.each(scanned_file_list.files, function(i, cb_each) {
           console.log("staging file: " + i);
-          FS.renameSync(LOCAL_SCANNED_BUFFER + "/" + i, LOCAL_SCANNED_IMAGES + "/" + i);
+          try {
+            FS.renameSync(LOCAL_SCANNED_BUFFER + "/" + i, LOCAL_SCANNED_IMAGES + "/" + i);
+          } catch(err) {
+            console.log("no file was found. not staging.");
+          }
           cb_each(null);
         });
         cb(null);
@@ -315,50 +319,57 @@ io.on('connection',function(socket){
     })
 
     socket.on('message', function(data, ack) {
-      now = new Date();
-      var filename = date(now, 'yyyymmddHHMMssl');
 
-      switch (data) {
-        case 'scan_device1':
-          console.log('device1 scan');
-          Webcam_1.capture( 'tmp1', function( err, data ) {
-              if( err ) {
-                  throw err;
-              }
-              Jimp.read('tmp1.bmp', (err, func) => {
-                if (err) throw err;
-                func
-                  .rotate(-90)
-                  .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
-                  .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 1));
-              });
-          });
-        break;
-        case 'scan_device2':
-          console.log('device2 scan');
-          Webcam_2.capture('tmp2', function( err, data ) {
-              if( err ) {
-                  throw err;
-              }
-              Jimp.read('tmp2.bmp', (err, func) => {
-                if (err) throw err;
-                if (APP_SELECT == APP_RECEPTION) {
+      if (scanned_file_list.files.length >= 6) {
+        ack("listfull");
+      } else {
+
+        now = new Date();
+        var filename = date(now, 'yyyymmddHHMMssl');
+
+        switch (data) {
+          case 'scan_device1':
+            console.log('device1 scan');
+            Webcam_1.capture( 'tmp1', function( err, data ) {
+                if( err ) {
+                    throw err;
+                }
+                Jimp.read('tmp1.bmp', (err, func) => {
+                  if (err) throw err;
                   func
                     .rotate(-90)
                     .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
-                    .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
-                } else {
-                  func
-                    .rotate(-90)
-                    .crop(0, 0, 1080, 1673)
-                    .resize(720, 1115)
-                    .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
+                    .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 1));
+                });
+            });
+          break;
+          case 'scan_device2':
+            console.log('device2 scan');
+            Webcam_2.capture('tmp2', function( err, data ) {
+                if( err ) {
+                    throw err;
                 }
-              });
-          });
-        break;
+                Jimp.read('tmp2.bmp', (err, func) => {
+                  if (err) throw err;
+                  if (APP_SELECT == APP_RECEPTION) {
+                    func
+                      .rotate(-90)
+                      .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
+                      .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
+                  } else {
+                    func
+                      .rotate(-90)
+                      .crop(0, 0, 1080, 1673)
+                      .resize(720, 1115)
+                      .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
+                  }
+                });
+            });
+          break;
+        }
+        console.log('received send');
       }
-      console.log('received send');
+
 
     });
 });

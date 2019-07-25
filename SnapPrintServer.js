@@ -212,8 +212,9 @@ app.get('/' + URI_REFRESH_SCAN, function(req, res) {
       //remove files
       async.each(scanned_file_list.files, function(i, cb_each) {
         console.log("removing file: " + LOCAL_SCANNED_IMAGES + "/" + i);
+
         FS.unlink(LOCAL_SCANNED_IMAGES + "/" + i, (err) => {
-          if (err) throw err;
+          if (err) {console.log("The file is already removed.");}
           cb_each(null);
         });
       });

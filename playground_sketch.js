@@ -429,7 +429,7 @@ function OnSendClickDev1(p) {
     }
   }
   if (!flg_notfull) {
-    console.log("scan full");
+    console.log("scan num full");
     keyState_Cam1 = KEY_STATE_IDLE;
     scan1_status = SCAN1_STATUS_OK;
     return;
@@ -437,6 +437,12 @@ function OnSendClickDev1(p) {
   console.log(img_slot_names);
   socket.send('scan_device1',function onack(res) {
     console.log(res);
+    if (res == "listfull") {
+      keyState_Cam1 = KEY_STATE_IDLE;
+      img_slot_names[i] = null;
+      scan1_status = SCAN1_STATUS_OK;
+      flg_refresh = true;
+    }
   });
 };
 
@@ -466,6 +472,12 @@ function OnSendClickDev2(p) {
   }
   socket.send('scan_device2',function onack(res) {
     console.log(res);
+    if (res == "listfull") {
+      keyState_Cam2 = KEY_STATE_IDLE;
+      img_slot_names[i] = null;
+      scan2_status = SCAN2_STATUS_OK;
+      flg_refresh = true;
+    }
   });
 };
 

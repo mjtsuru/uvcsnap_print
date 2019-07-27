@@ -91,6 +91,7 @@ var sketchBack = function(p) {
 
     if (p.keyIsPressed) {
         console.log(p.keyCode);
+        console.log("keyStates " + keyState_Cam1 + " " + keyState_Cam2);
         //if (p.key == 'a' || p.key == 's' || p.key == 'd' || p.key == 'f' || p.key == 'g' ) {
         if (cam1Key.indexOf(p.key) >= 0) {
           if (keyState_Cam1 != KEY_STATE_BUSY) {
@@ -412,9 +413,10 @@ function OnClickBatsu5() {
 function OnSendClickDev1(p) {
   console.log("sending dev1 scan msg");
   scan1_status = SCAN1_STATUS_DOING;
-
+  var flg_notfull = false;
   for (var i = 0; i < img_slot_names.length; i++) {
     if (img_slot_names[i] == null || img_slot_names[i] == undefined) {
+      flg_notfull = true;
       if (song.isPlaying()) {
         // .isPlaying() returns a boolean
         //song.stop();
@@ -426,18 +428,31 @@ function OnSendClickDev1(p) {
       break;
     }
   }
+  if (!flg_notfull) {
+    console.log("scan num full");
+    keyState_Cam1 = KEY_STATE_IDLE;
+    scan1_status = SCAN1_STATUS_OK;
+    return;
+  }
   console.log(img_slot_names);
   socket.send('scan_device1',function onack(res) {
     console.log(res);
+    if (res == "listfull") {
+      keyState_Cam1 = KEY_STATE_IDLE;
+      img_slot_names[i] = null;
+      scan1_status = SCAN1_STATUS_OK;
+      flg_refresh = true;
+    }
   });
 };
 
 function OnSendClickDev2(p) {
   console.log("sending dev2 scan msg");
   scan2_status = SCAN2_STATUS_DOING;
-
+  var flg_notfull = false;
   for (var i = 0; i < img_slot_names.length; i++) {
     if (img_slot_names[i] == null || img_slot_names[i] == undefined) {
+      flg_notfull = true;
       if (song.isPlaying()) {
         // .isPlaying() returns a boolean
         //song.stop();
@@ -449,8 +464,20 @@ function OnSendClickDev2(p) {
       break;
     }
   }
+  if (flg_notfull != true) {
+    console.log("scan full");
+    keyState_Cam2 = KEY_STATE_IDLE;
+    scan2_status = SCAN1_STATUS_OK;
+    return;
+  }
   socket.send('scan_device2',function onack(res) {
     console.log(res);
+    if (res == "listfull") {
+      keyState_Cam2 = KEY_STATE_IDLE;
+      img_slot_names[i] = null;
+      scan2_status = SCAN2_STATUS_OK;
+      flg_refresh = true;
+    }
   });
 };
 

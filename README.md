@@ -10,11 +10,11 @@ Integrating node packages to provide hardware control services for an art projec
 
 ### Host: Windows10 64bit, MacOSX  
 
-Node.js: v8.10.0
-Python2.X
+### Node.js: v8.10.0
+### Python2.X
 
-Packages:  
-Node  
+### Packages:  
+#### Node  
 
 node-webcam (UVC camera)  
 https://www.npmjs.com/package/node-webcam  
@@ -30,6 +30,11 @@ https://github.com/socketio/socket.io
 
 **(OSX Only)** imagesnap  
 https://github.com/rharder/imagesnap  
+
+#### Python  
+**(Windows)** win32print  
+
+PIL
 
 ## Usage
 
@@ -167,9 +172,10 @@ cd uvcsnap_print
 
 Start the server for the test.
 ```
-node SnapPrintServer.js --cam1 3 --cam2 4
+node SnapPrintServer.js --cam1 3 --cam2 4 --app p
 ```
 Note that cam1 and cam2 options set the uvc camera device name (in Windows, these are numbers).  
+"app" option accept 'r':reception and 'p':playground.  
 
 * In OSX, know the name of your uvc cameras by imagesnap.  
 ```

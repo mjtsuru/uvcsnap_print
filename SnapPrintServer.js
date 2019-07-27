@@ -19,7 +19,7 @@ const LOCAL_SCANNED_BUFFER = URI_SCANNED_BUFFER;
 const LOCAL_SCANNED_IMAGES = URI_SCANNED_IMAGES;
 const LOCAL_PRINT_BUFFER = URI_PRINT_BUFFER;
 
-const PRINT_BUFFER_FULLPATH_WIN = "C:/Users/neologue-vaio/workspace/aitri2019/uvcsnap_print/" + URI_PRINT_BUFFER;
+const PRINT_BUFFER_FULLPATH_WIN = "C:/Users/natalie-lets/workspace/aitri2019/uvcsnap_print/" + URI_PRINT_BUFFER;
 
 const APP_RECEPTION = 'r';
 const APP_PLAYGROUND = 'p';
@@ -241,24 +241,28 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
     //[TODO] Handle when no files are under the print buffer
     console.log("printing :" + printfile_list.list);
 
-    //ask python script for printing
-    if (is_windows) {
-      const scriptExecution = spawn("python.exe", ["test_pythonshell.py"]);
-    } else {
-      const scriptExecution = spawn("python", ["test_pythonshell.py"]);
-    }
-    scriptExecution.stdout.on('data', (data) => {
-        console.log(String.fromCharCode.apply(null, data));
-        async.each(printfile_list.list, function(i, cb_each) {
-          console.log("removing file: " + i);
-          FS.unlink(i, (err) => {
-            if (err) throw err;
-            cb_each(null);
+    try {
+      //ask python script for printing
+      if (is_windows) {
+        const scriptExecution = spawn("python", ["test_pythonshell.py"]);
+      } else {
+        const scriptExecution = spawn("python", ["test_pythonshell.py"]);
+      }
+      scriptExecution.stdout.on('data', (data) => {
+          console.log(String.fromCharCode.apply(null, data));
+          async.each(printfile_list.list, function(i, cb_each) {
+            console.log("removing file: " + i);
+            FS.unlink(i, (err) => {
+              if (err) throw err;
+              cb_each(null);
+            });
           });
-        });
-    });
-    scriptExecution.stdin.write(JSON.stringify(printfile_list));
-    scriptExecution.stdin.end();
+      });
+      scriptExecution.stdin.write(JSON.stringify(printfile_list));
+      scriptExecution.stdin.end();
+    } catch(err) {
+      console.log("Failed to call python script");
+    }
   });
   res.sendStatus(200);
 });

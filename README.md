@@ -8,11 +8,14 @@ Integrating node packages to provide hardware control services for an art projec
 
 ## Requirement
 
-Host: Windows10 64bit, MacOSX  
+### Host: Windows10 64bit, MacOSX  
 
 Node.js: v8.10.0
+Python2.X
 
 Packages:  
+Node  
+
 node-webcam (UVC camera)  
 https://www.npmjs.com/package/node-webcam  
 

@@ -60,8 +60,10 @@ KEY_STATE_IDLE = 0;
 KEY_STATE_BUSY = 1;
 var keyState_Cam1 = KEY_STATE_IDLE;
 var keyState_Cam2 = KEY_STATE_IDLE;
-var cam1Key = ['q','w','e','r','t','a','s','d','f','z','x','c','v'];
-var cam2Key = ['u','i','o','p','@','j','k','l',';',':','n','m',',','.','/'];
+var cam1Key = ['a'];
+var cam2Key = [']'];
+var keycodeIgnore = [9, 18, 19, 32, 37, 38, 39, 40, 91, 93, 240, 112, 114, 116, 117, 123, 243, 244, 242];
+//91win, 242Kana, 243Hankaku, 244Zenkaku => registry
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_y.png');
   var w = SCAN_IMG_W / SCAN_IMG_DIV;
@@ -499,3 +501,11 @@ new p5(sketch3_status, "container5");
 new p5(sketch4_status, "container6");
 new p5(sketch5_status, "container7");
 new p5(sketch6_status, "container8");
+
+document.onkeydown = (event) => {
+  if (keycodeIgnore.indexOf(event.keyCode) >= 0 ) {
+    console.log('ignore key');
+    event.preventDefault();
+    return false;
+  }
+};

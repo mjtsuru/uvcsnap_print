@@ -48,6 +48,9 @@ def execPrint(file_name):
     printer_size = hDC.GetDeviceCaps (PHYSICALWIDTH), hDC.GetDeviceCaps (PHYSICALHEIGHT)
     printer_margins = hDC.GetDeviceCaps (PHYSICALOFFSETX), hDC.GetDeviceCaps (PHYSICALOFFSETY)
 
+    print("printable_area: " + str(printable_area))
+    print("printer_size: " + str(printer_size))
+    print("printer_margins: " + str(printer_margins))
     #
     # Open the image, rotate it if it's wider than
     #  it is high, and work out how much to multiply
@@ -75,6 +78,11 @@ def execPrint(file_name):
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
 
+    print(x1)
+    print(y1)
+    print(x2)
+    print(y2)
+
     #Ricoh SPC751m with 720x1115
     x1 = 0
     y1 = 0
@@ -86,3 +94,7 @@ def execPrint(file_name):
     hDC.EndPage ()
     hDC.EndDoc ()
     hDC.DeleteDC ()
+
+
+if __name__ == '__main__':
+    execPrint("0.png")

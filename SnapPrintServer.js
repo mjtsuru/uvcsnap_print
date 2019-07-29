@@ -69,7 +69,7 @@ var printer = require("printer"),
 path = require('path');
   //Use Python script for windows
 const spawn = require('child_process').spawn;
-        const scriptExecution = spawn("python", ["test_pythonshell.py"]);
+const scriptExecution = spawn("python", ["test_pythonshell.py"]);
 //Command Arguments
 program
   .option('--cam1 <text>')

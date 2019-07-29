@@ -69,7 +69,7 @@ var printer = require("printer"),
 path = require('path');
   //Use Python script for windows
 const spawn = require('child_process').spawn;
-
+        const scriptExecution = spawn("python", ["test_pythonshell.py"]);
 //Command Arguments
 program
   .option('--cam1 <text>')
@@ -233,7 +233,7 @@ app.get('/' + URI_REFRESH_SCAN, function(req, res) {
 app.get('/' + URI_EXEC_PRINT, function(req, res) {
   //Execute printing out files under print Buffer
   //get file list in the Buffer
-  glob(LOCAL_PRINT_BUFFER + "/*.jpg", function(err, files) {
+  glob(LOCAL_PRINT_BUFFER + "/*.png", function(err, files) {
     if (err) {
       res.sendStatus(500);
       throw err;

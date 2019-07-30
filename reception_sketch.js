@@ -85,6 +85,8 @@ var keyLeftState = KEY_STATE_IDLE;
 var keyRightState = KEY_STATE_IDLE;
 var cam1Key = ['a'];
 var cam2Key = [']'];
+var hikitsugi1Key = ['q'];
+var hikitsugi2Key = ['['];
 var keycodeIgnore = [9, 18, 19, 32, 37, 38, 39, 40, 91, 93, 240, 112, 114, 116, 117, 123, 243, 244, 242];
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_g.png');
@@ -98,47 +100,46 @@ var sketchBack = function(p) {
     p.image(img_back, 0, 0, CANVAS_BACK_W / 2, CANVAS_BACK_H / 2);
     if (p.keyIsPressed) {
       if (cam1Key.indexOf(p.key) >= 0) {
-        if (keyLeftState != KEY_STATE_BUSY) {
-          keyLeftState = KEY_STATE_BUSY;
-          if (scan1_status == SCAN1_STATUS_OK) {
-            OnSendClickDev1();
-          } else if (scan1_status == SCAN1_STATUS_BATSU) {
+        if (scan1_status == SCAN1_STATUS_OK) {
+          if (keyLeftState != KEY_STATE_BUSY) {
+              keyLeftState = KEY_STATE_BUSY;
+              OnSendClickDev1();
+          }
+        }
+        // else if (scan1_status == SCAN1_STATUS_BATSU) {
+        //   console.log('confirmation');
+        //   OnConfirmDev1();
+        // }
+      } else if (cam2Key.indexOf(p.key) >= 0) {
+        if (scan2_status == SCAN2_STATUS_OK) {
+          if (keyRightState != KEY_STATE_BUSY) {
+            keyRightState = KEY_STATE_BUSY;
+            OnSendClickDev2();
+          }
+        }
+        //  else if (scan2_status == SCAN2_STATUS_BATSU) {
+        //   console.log('confirmation');
+        //   OnConfirmDev2();
+        // }
+      }
+      if (hikitsugi1Key.indexOf(p.key) >= 0) {
+        if (scan1_status == SCAN1_STATUS_BATSU) {
+          if (keyLeftState != KEY_STATE_BUSY) {
+            keyLeftState = KEY_STATE_BUSY;
             console.log('confirmation');
             OnConfirmDev1();
           }
         }
-      } else if (cam2Key.indexOf(p.key) >= 0) {
-        keyRightState = KEY_STATE_BUSY;
-        if (scan2_status == SCAN2_STATUS_OK) {
-          OnSendClickDev2();
-        } else if (scan2_status == SCAN2_STATUS_BATSU) {
-          console.log('confirmation');
-          OnConfirmDev2();
-        }
       }
-
-      // if (keyLeftState != KEY_STATE_BUSY) {
-      //   if (p.key == 'a') {
-      //     keyLeftState = KEY_STATE_BUSY;
-      //     if (scan1_status == SCAN1_STATUS_OK) {
-      //       OnSendClickDev1();
-      //     } else if (scan1_status == SCAN1_STATUS_BATSU) {
-      //       console.log('confirmation');
-      //       OnConfirmDev1();
-      //     }
-      //   }
-      // }
-      // if (keyRightState != KEY_STATE_BUSY) {
-      //   if (p.key == 'l') {
-      //     keyRightState = KEY_STATE_BUSY;
-      //     if (scan2_status == SCAN2_STATUS_OK) {
-      //       OnSendClickDev2();
-      //     } else if (scan2_status == SCAN2_STATUS_BATSU) {
-      //       console.log('confirmation');
-      //       OnConfirmDev2();
-      //     }
-      //   }
-      // }
+      if (hikitsugi2Key.indexOf(p.key) >= 0) {
+        if (scan2_status == SCAN2_STATUS_BATSU) {
+          if (keyRightState != KEY_STATE_BUSY) {
+            keyRightState = KEY_STATE_BUSY;
+            console.log('confirmation');
+            OnConfirmDev2();
+          }
+       }
+      }
     }
   };
 }

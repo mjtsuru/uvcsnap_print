@@ -84,9 +84,9 @@ def execPrint(file_name):
     print(y2)
 
     #Ricoh SPC751m with 720x1115
-    x1 = 0
+    x1 = 100
     y1 = 0
-    x2 = 5550
+    x2 = 5540
     y2 = 8599
 
     dib.draw (hDC.GetHandleOutput (), (x1, y1, x2, y2))

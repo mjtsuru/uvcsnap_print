@@ -12,6 +12,9 @@ BACK_IMG_H = 1440 * BACK_DIV;
 //1585 x 2345
 SCAN_IMG_W = 100;
 SCAN_IMG_H = 148;
+SCAN_IMG_INNER_PADDING_X = 5;
+SCAN_IMG_INNER_PADDING_Y = 8;
+
 
 SCAN_IMG_DIV = 0.523;
 SCAN_IMG_X_ZERO = 32.5;
@@ -66,8 +69,8 @@ var keycodeIgnore = [9, 18, 19, 32, 37, 38, 39, 40, 91, 93, 240, 112, 114, 116, 
 //91win, 242Kana, 243Hankaku, 244Zenkaku => registry
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_y.png');
-  var w = SCAN_IMG_W / SCAN_IMG_DIV;
-  var h = SCAN_IMG_H / SCAN_IMG_DIV;
+  var w = (SCAN_IMG_W / SCAN_IMG_DIV) - SCAN_IMG_INNER_PADDING_X * 2;
+  var h = (SCAN_IMG_H / SCAN_IMG_DIV) - SCAN_IMG_INNER_PADDING_Y * 2;
 
   for (var i = 0; i < IMG_NUMBER;i++) {
     img_slot[i] = p.loadImage('data/trans_y.png');
@@ -78,7 +81,7 @@ var sketchBack = function(p) {
     p.image(img_back, 0, 0, BACK_IMG_W, BACK_IMG_H);
 
     for (let i in img_slot) {
-      p.image(img_slot[i], SCAN_IMG_X_ZERO + SCAN_IMG_X_PADDING * i, SCAN_IMG_Y_ZERO, w, h);
+      p.image(img_slot[i], SCAN_IMG_X_ZERO + SCAN_IMG_X_PADDING * i + SCAN_IMG_INNER_PADDING_X, SCAN_IMG_Y_ZERO + SCAN_IMG_INNER_PADDING_Y, w, h);
     }
 
   };
@@ -88,7 +91,7 @@ var sketchBack = function(p) {
     //Exec Display
     p.image(img_back, 0, 0, BACK_IMG_W, BACK_IMG_H);
     for (let i in img_slot) {
-      p.image(img_slot[i], SCAN_IMG_X_ZERO + SCAN_IMG_X_PADDING * i, SCAN_IMG_Y_ZERO, w, h);
+      p.image(img_slot[i], SCAN_IMG_X_ZERO + SCAN_IMG_X_PADDING * i + SCAN_IMG_INNER_PADDING_X, SCAN_IMG_Y_ZERO + SCAN_IMG_INNER_PADDING_Y, w, h);
     }
 
     if (p.keyIsPressed) {

@@ -83,9 +83,9 @@ KEY_STATE_IDLE = 0;
 KEY_STATE_BUSY = 1;
 var keyLeftState = KEY_STATE_IDLE;
 var keyRightState = KEY_STATE_IDLE;
-var cam1Key = ['q','w','e','r','t','a','s','d','f','z','x','c','v'];
-var cam2Key = ['u','i','o','p','@','j','k','l',';',':','n','m',',','.','/'];
-
+var cam1Key = ['a'];
+var cam2Key = [']'];
+var keycodeIgnore = [9, 18, 19, 32, 37, 38, 39, 40, 91, 93, 240, 112, 114, 116, 117, 123, 243, 244, 242];
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_g.png');
   p.setup = function() {

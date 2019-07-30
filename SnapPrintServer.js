@@ -29,6 +29,8 @@ var APP_SELECT = APP_RECEPTION;
 
 const CROPSIZE_W = 720;
 const CROPSIZE_H = 1115;
+const CROP_REM_W = 2;
+const CROP_REM_H = 3;
 
 /*
 * OS judge
@@ -346,7 +348,8 @@ io.on('connection',function(socket){
                   if (APP_SELECT == APP_RECEPTION) {
                     func
                       .rotate(-90)
-                      .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
+                      .crop(CROP_REM_W, CROP_REM_H, CROPSIZE_W - CROP_REM_W, CROPSIZE_H - CROP_REM_H)
+                      .resize(CROPSIZE_W, CROPSIZE_H)
                       .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 1));
                   } else {
                     func
@@ -369,7 +372,8 @@ io.on('connection',function(socket){
                   if (APP_SELECT == APP_RECEPTION) {
                     func
                       .rotate(-90)
-                      .crop(0, 0, CROPSIZE_W, CROPSIZE_H)
+                      .crop(CROP_REM_W, CROP_REM_H, CROPSIZE_W - CROP_REM_W, CROPSIZE_H - CROP_REM_H)
+                      .resize(CROPSIZE_W, CROPSIZE_H)
                       .write(LOCAL_SCANNED_BUFFER + "/" + filename + ".jpg", jimpwritecallback(socket, ack, filename, 2));
                   } else {
                     func

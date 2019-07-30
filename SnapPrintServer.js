@@ -59,7 +59,7 @@ var http = require('http').Server(app);
 const io = require('socket.io')(http);
 const PORT = process.env.PORT || 80;
 // for the filesystem monitoring
-var chokidar = require('chokidar');
+//var chokidar = require('chokidar');
 // for the filename timestamp
 var date = require('dateformat');
 var now = new Date();
@@ -117,34 +117,34 @@ if (isNaN(parseInt(ops.app))) {
 }
 
 //Use chokidar
-var scan_watcher = chokidar.watch(LOCAL_SCANNED_BUFFER, {
-  persistent:true,
-  ignoreInitial:true //without this flag, add events occurs when the watcher is created
-});
-var print_watcher = chokidar.watch(LOCAL_PRINT_BUFFER, {
-  persistent:true,
-  ignoreInitial:true //without this flag, add events occurs when the watcher is created
-});
-
-scan_watcher.on('ready', function() { console.log("start watching " + LOCAL_SCANNED_BUFFER); })
-	.on('add', function(path) { console.log("added file-> " + path); })
-	.on('addDir', function(path) { console.log("added dir-> " + path); })
-	.on('unlink', function(path) { console.log("removed file-> " + path); })
-	.on('unlinkDir', function(path) { console.log("removed dir-> " + path); })
-	.on('change', function(path) { console.log("modified-> " + path); })
-	.on('error', function(error) { console.log("error-> " + error); });
-
-print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRINT_BUFFER); })
-	.on('add', function(path) {
-    console.log("added file-> " + path);
-  })
-	.on('addDir', function(path) { console.log("added dir-> " + path); })
-	.on('unlink', function(path) { console.log("removed file-> " + path); })
-	.on('unlinkDir', function(path) { console.log("removed dir-> " + path); })
-	.on('change', function(path) {
-    console.log("modified-> " + path); })
-
-	.on('error', function(error) { console.log("error-> " + error); })
+// var scan_watcher = chokidar.watch(LOCAL_SCANNED_BUFFER, {
+//   persistent:true,
+//   ignoreInitial:true //without this flag, add events occurs when the watcher is created
+// });
+// var print_watcher = chokidar.watch(LOCAL_PRINT_BUFFER, {
+//   persistent:true,
+//   ignoreInitial:true //without this flag, add events occurs when the watcher is created
+// });
+//
+// scan_watcher.on('ready', function() { console.log("start watching " + LOCAL_SCANNED_BUFFER); })
+// 	.on('add', function(path) { console.log("added file-> " + path); })
+// 	.on('addDir', function(path) { console.log("added dir-> " + path); })
+// 	.on('unlink', function(path) { console.log("removed file-> " + path); })
+// 	.on('unlinkDir', function(path) { console.log("removed dir-> " + path); })
+// 	.on('change', function(path) { console.log("modified-> " + path); })
+// 	.on('error', function(error) { console.log("error-> " + error); });
+//
+// print_watcher.on('ready', function() { console.log("start watching " + LOCAL_PRINT_BUFFER); })
+// 	.on('add', function(path) {
+//     console.log("added file-> " + path);
+//   })
+// 	.on('addDir', function(path) { console.log("added dir-> " + path); })
+// 	.on('unlink', function(path) { console.log("removed file-> " + path); })
+// 	.on('unlinkDir', function(path) { console.log("removed dir-> " + path); })
+// 	.on('change', function(path) {
+//     console.log("modified-> " + path); })
+//
+// 	.on('error', function(error) { console.log("error-> " + error); })
 
 
 //server setting
@@ -323,6 +323,7 @@ io.on('connection',function(socket){
       console.log('staging: ' + data);
       if (data != null) {
         FS.renameSync(LOCAL_SCANNED_BUFFER + "/" + data, LOCAL_SCANNED_IMAGES + "/" + data);
+        scanned_file_list.files = [];
         ack('staging done');
       }
     })

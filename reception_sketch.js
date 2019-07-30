@@ -5,9 +5,9 @@ CANVAS_BACK_H = 1440;
 
 SCAN_IMG_W = 720;
 SCAN_IMG_H = 1115;
-SCAN_IMG_DIV = 2.46;
-SCAN_IMG_INNER_PADDING_X = 0;
-SCAN_IMG_INNER_PADDING_Y = 0;
+SCAN_IMG_DIV = 2.5;
+SCAN_IMG_INNER_PADDING_X = 12;
+SCAN_IMG_INNER_PADDING_Y = 10;
 SCAN_IMG_X_ZERO = 59;
 SCAN_IMG_Y_ZERO = 234;
 SCAN_IMG_X_PADDING = 870;
@@ -162,12 +162,11 @@ function OnConfirmDev2() {
 //  keyLeftState = KEY_STATE_BUSY;
 }
 
-
 var sketch1 = function(p) {
-  img_scan1 = p.loadImage('data/trans_g2.png'); //720 x 1115
+  img_scan1 = p.loadImage('data/trans_y.png'); //720 x 1115
   //done = p.loadImage('data/done.png'); //2237 × 836
-  var w = SCAN_IMG_W / SCAN_IMG_DIV;
-  var h = SCAN_IMG_H / SCAN_IMG_DIV;
+  var w = (SCAN_IMG_W / SCAN_IMG_DIV) - SCAN_IMG_INNER_PADDING_X * 2;
+  var h = (SCAN_IMG_H / SCAN_IMG_DIV) - SCAN_IMG_INNER_PADDING_Y * 2;
   p.setup = function() {
     cnv = p.createCanvas(SCAN_IMG_W / SCAN_IMG_DIV, SCAN_IMG_H / SCAN_IMG_DIV);
     //p.background(0);
@@ -249,7 +248,7 @@ var sketch1_status_left = function(p) {
 
 var sketch1_status_right = function(p) {
   var img_left_size = STATUS_W;
-  img_1_status_right = p.loadImage('data/trans_g2.png');
+  img_1_status_right = p.loadImage('data/trans_y.png');
 //    img_1_status_right = p.loadImage('data/next_g.png');
   p.setup = function() {
     cnv = p.createCanvas(img_left_size, STATUS_H);
@@ -284,7 +283,7 @@ var sketch1_status_right = function(p) {
     } else if (scan1_status == SCAN1_STATUS_OK) {
       if (scan1_status_change_done == 3) {
         console.log('hikitsugi to transparent');
-        img_1_status_right = p.loadImage('data/trans_g2.png');
+        img_1_status_right = p.loadImage('data/trans_y.png');
         scan1_status_change_done = 2;
         //p.image(img_1_status_right, 0, 0, STATUS_W, STATUS_H);
       }
@@ -300,7 +299,8 @@ var sketch1_status_right = function(p) {
 
 var sketch2 = function(p) {
   img_scan2 = p.loadImage('data/dummy_g.png'); //720 x 1115
-  //done = p.loadImage('data/done.png'); //2237 × 836
+  var w = (SCAN_IMG_W / SCAN_IMG_DIV) - SCAN_IMG_INNER_PADDING_X * 2;
+  var h = (SCAN_IMG_H / SCAN_IMG_DIV) - SCAN_IMG_INNER_PADDING_Y * 2;
   p.setup = function() {
     cnv = p.createCanvas(SCAN_IMG_W / SCAN_IMG_DIV, SCAN_IMG_H / SCAN_IMG_DIV);
     //p.background(0);
@@ -320,7 +320,7 @@ var sketch2 = function(p) {
       img_scan2 = p.loadImage("scanned_buffer/" + img_scan2_src);
       scan2_status = SCAN2_STATUS_BATSU;
     }
-    p.image(img_scan2, 0, 0, p.width, p.height);
+    p.image(img_scan2, 0, 0, w, h);
   };
 };
 
@@ -382,7 +382,7 @@ var sketch2_status_left = function(p) {
 
 var sketch2_status_right = function(p) {
   var img_left_size = STATUS_W;
-  img_2_status_right = p.loadImage('data/trans_g2.png');
+  img_2_status_right = p.loadImage('data/trans_y.png');
   p.setup = function() {
     cnv = p.createCanvas(img_left_size, STATUS_H);
     //p.background(255);
@@ -416,7 +416,7 @@ var sketch2_status_right = function(p) {
       if (scan2_status_change_done == 3) {
         console.log('hikitsugi to transparent');
         //p.background(255, 255, 255, 126);
-        img_2_status_right = p.loadImage('data/trans_g2.png');
+        img_2_status_right = p.loadImage('data/trans_y.png');
         scan2_status_change_done = 2;
         //p.image(img_2_status_right, 0, 0, STATUS_W, STATUS_H);
       }
@@ -550,3 +550,11 @@ new p5(sketch1_status_right, "container3");
 new p5(sketch1_status_left, "container4");
 new p5(sketch2_status_right, "container5");
 new p5(sketch2_status_left, "container6");
+
+document.onkeydown = (event) => {
+  if (keycodeIgnore.indexOf(event.keyCode) >= 0 ) {
+    console.log('ignore key');
+    event.preventDefault();
+    return false;
+  }
+};

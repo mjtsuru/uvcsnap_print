@@ -354,7 +354,7 @@ io.on('connection',function(socket){
             console.log('device1 scan');
             Webcam_1.capture( 'tmp1', function( err, data ) {
                 if( err ) {
-                    throw err;
+                    camErrorCallback(socket, ack, 1);
                 }
                 Jimp.read('tmp1.bmp', (err, func) => {
                   if (err) throw err;
@@ -414,6 +414,15 @@ function jimpwritecallback(socket, ack, filename, device) {
   var msg = new Object();
   msg.device = device;
   msg.filename = filename + ".jpg";
+  socket.send(JSON.stringify(msg), function onack(res) {
+    console.log(res);
+  });
+}
+
+function camErrorCallback(socket, ack, device) {
+  ack('error');
+  var msg = new Object();
+  msg.error = device;
   socket.send(JSON.stringify(msg), function onack(res) {
     console.log(res);
   });

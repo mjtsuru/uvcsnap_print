@@ -140,6 +140,20 @@ var task = function(p) {
         img_slot_names[i] = null;
       }
       flg_refresh = true;
+    } else if (msg.error) {
+      console.log("Cam capture error!");
+      if (msg.error == 1) {
+        keyState_Cam1 = KEY_STATE_IDLE;
+      } else {
+        keyState_Cam2 = KEY_STATE_IDLE;
+      }
+      for (var i = 0; i < img_slot_names.length; i++) {
+        if (img_slot_names[i] == "doing") {
+          img_slot_names[i] = null;
+          img_status[i] = p.loadImage("data/trans_y.png");
+          break;
+        }
+      }
     }
 
     ack('client ack for send');

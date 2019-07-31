@@ -154,6 +154,18 @@ var task = function(p) {
           break;
         }
       }
+    } else if (msg.command) {
+      if (msg.command == "key1") {
+        if (keyState_Cam1 != KEY_STATE_BUSY) {
+          keyState_Cam1 = KEY_STATE_BUSY;
+          OnSendClickDev1(p);
+        }
+      } else if (msg.command == "key2") {
+        if (keyState_Cam2 != KEY_STATE_BUSY) {
+          keyState_Cam2 = KEY_STATE_BUSY;
+          OnSendClickDev2(p);
+        }
+      }
     }
 
     ack('client ack for send');

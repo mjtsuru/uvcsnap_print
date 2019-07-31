@@ -71,7 +71,7 @@ var printer = require("printer"),
 path = require('path');
   //Use Python script for windows
 const spawn = require('child_process').spawn;
-const scriptExecution = spawn("python", ["test_pythonshell.py"]);
+//const scriptExecution = spawn("python", ["test_pythonshell.py"]);
 //Command Arguments
 program
   .option('--cam1 <text>')
@@ -235,6 +235,7 @@ app.get('/' + URI_REFRESH_SCAN, function(req, res) {
 app.get('/' + URI_EXEC_PRINT, function(req, res) {
   //Execute printing out files under print Buffer
   //get file list in the Buffer
+  console.log("print exec called");
   glob(LOCAL_PRINT_BUFFER + "/*.png", function(err, files) {
     if (err) {
       res.sendStatus(500);
@@ -247,17 +248,19 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
 
     try {
       //ask python script for printing
-      if (is_windows) {
-        const scriptExecution = spawn("python", ["test_pythonshell.py"]);
-      } else {
-        const scriptExecution = spawn("python", ["test_pythonshell.py"]);
-      }
+      // if (is_windows) {
+        var scriptExecution = spawn("python", ["test_pythonshell.py"]);
+      // } else {
+      //  const scriptExecution = spawn("python", ["test_pythonshell.py"]);
+      // }
       scriptExecution.stdout.on('data', (data) => {
           console.log(String.fromCharCode.apply(null, data));
           async.each(printfile_list.list, function(i, cb_each) {
             console.log("removing file: " + i);
             FS.unlink(i, (err) => {
-              if (err) throw err;
+              if (err) {
+                console.log("no file to be removed");
+              };
               cb_each(null);
             });
           });
@@ -266,6 +269,15 @@ app.get('/' + URI_EXEC_PRINT, function(req, res) {
       scriptExecution.stdin.end();
     } catch(err) {
       console.log("Failed to call python script");
+      async.each(printfile_list.list, function(i, cb_each) {
+        console.log("removing file: " + i);
+        FS.unlink(i, (err) => {
+          if (err) {
+            console.log("no file to be removed");
+          };
+          cb_each(null);
+        });
+      });
     }
   });
   res.sendStatus(200);

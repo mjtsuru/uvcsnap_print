@@ -8,6 +8,6 @@ for line in sys.stdin:
 #    print(files['list'])
 
     for filename in files['list']:
-        printer.execPrint(filename)
+       printer.execPrint(filename)
 
     print(filename)

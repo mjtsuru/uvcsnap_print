@@ -130,7 +130,7 @@ var task = function(p) {
         if (img_slot_names[i] == "doing") {
           img_slot[i] = p.loadImage("scanned_buffer/" + msg.filename);
           img_slot_names[i] = msg.filename;
-          img_status[i] = p.loadImage("data/batsu_y.png");
+          img_status[i] = p.loadImage("data/batsu2.png");
           break;
         }
       }

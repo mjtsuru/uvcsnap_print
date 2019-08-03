@@ -140,6 +140,32 @@ var task = function(p) {
         img_slot_names[i] = null;
       }
       flg_refresh = true;
+    } else if (msg.error) {
+      console.log("Cam capture error!");
+      if (msg.error == 1) {
+        keyState_Cam1 = KEY_STATE_IDLE;
+      } else {
+        keyState_Cam2 = KEY_STATE_IDLE;
+      }
+      for (var i = 0; i < img_slot_names.length; i++) {
+        if (img_slot_names[i] == "doing") {
+          img_slot_names[i] = null;
+          img_status[i] = p.loadImage("data/trans_y.png");
+          break;
+        }
+      }
+    } else if (msg.command) {
+      if (msg.command == "key1") {
+        if (keyState_Cam1 != KEY_STATE_BUSY) {
+          keyState_Cam1 = KEY_STATE_BUSY;
+          OnSendClickDev1(p);
+        }
+      } else if (msg.command == "key2") {
+        if (keyState_Cam2 != KEY_STATE_BUSY) {
+          keyState_Cam2 = KEY_STATE_BUSY;
+          OnSendClickDev2(p);
+        }
+      }
     }
 
     ack('client ack for send');

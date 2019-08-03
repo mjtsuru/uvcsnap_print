@@ -17,6 +17,8 @@ const URI_PRINT_BUFFER = "print_buffer";
 const URI_SCAN_LIST = "scan_list";
 const URI_REFRESH_SCAN = "refresh_scan";
 const URI_EXEC_PRINT = "exec_print";
+const URI_CAM1KEY = "cam1key";
+const URI_CAM2KEY = "cam2key";
 const LOCAL_SCANNED_BUFFER = URI_SCANNED_BUFFER;
 const LOCAL_SCANNED_IMAGES = URI_SCANNED_IMAGES;
 const LOCAL_PRINT_BUFFER = URI_PRINT_BUFFER;
@@ -169,6 +171,8 @@ app.use(express.static(URI_SCAN_LIST));
 //Command URI endpoint
 app.use(express.static(URI_REFRESH_SCAN));
 app.use(express.static(URI_SCANNED_IMAGES));
+app.use(express.static(URI_CAM1KEY));
+app.use(express.static(URI_CAM2KEY));
 app.use(bodyParser.json()) // for parsing application/x-www-form-urlencoded
 
 app.get('/' , function(req, res){
@@ -230,6 +234,25 @@ app.get('/' + URI_REFRESH_SCAN, function(req, res) {
       res.sendStatus(200);
     }
   ])
+});
+
+app.get('/' + URI_CAM1KEY, function(req, res) {
+  console.log("cam1key request from app");
+  var msg = new Object();
+  msg.command = "key1";
+  my_socket.send(JSON.stringify(msg), function onack(res) {
+    console.log(res);
+  });
+});
+
+app.get('/' + URI_CAM2KEY, function(req, res) {
+  console.log("cam2key request from app");
+  var msg = new Object();
+  msg.command = "key2";
+  my_socket.send(JSON.stringify(msg), function onack(res) {
+    console.log(res);
+  });
+
 });
 
 app.get('/' + URI_EXEC_PRINT, function(req, res) {
@@ -354,7 +377,7 @@ io.on('connection',function(socket){
             console.log('device1 scan');
             Webcam_1.capture( 'tmp1', function( err, data ) {
                 if( err ) {
-                    throw err;
+                    camErrorCallback(socket, ack, 1);
                 }
                 Jimp.read('tmp1.bmp', (err, func) => {
                   if (err) throw err;
@@ -414,6 +437,15 @@ function jimpwritecallback(socket, ack, filename, device) {
   var msg = new Object();
   msg.device = device;
   msg.filename = filename + ".jpg";
+  socket.send(JSON.stringify(msg), function onack(res) {
+    console.log(res);
+  });
+}
+
+function camErrorCallback(socket, ack, device) {
+  ack('error');
+  var msg = new Object();
+  msg.error = device;
   socket.send(JSON.stringify(msg), function onack(res) {
     console.log(res);
   });

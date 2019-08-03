@@ -84,9 +84,9 @@ KEY_STATE_BUSY = 1;
 var keyLeftState = KEY_STATE_IDLE;
 var keyRightState = KEY_STATE_IDLE;
 var cam1Key = ['a'];
-var cam2Key = [']'];
-var hikitsugi1Key = ['q'];
-var hikitsugi2Key = ['['];
+var cam2Key = ['l'];
+var hikitsugi1Key = ['f'];
+var hikitsugi2Key = [']'];
 var keycodeIgnore = [9, 18, 19, 32, 37, 38, 39, 40, 91, 93, 240, 112, 114, 116, 117, 123, 243, 244, 242];
 var sketchBack = function(p) {
   img_back = p.loadImage('data/scan_back_g.png');
@@ -192,7 +192,9 @@ var sketch1 = function(p) {
 var scan1_status_change_done = 1;
 var sketch1_status_left = function(p) {
   var img_left_size = STATUS_W * 2;
+  var img_left_offset = 0;
   img_1_status_left = p.loadImage('data/ok_g.png');
+
 
   song = p.loadSound('data/shinkazoku.wav');
   p.setup = function() {
@@ -212,15 +214,15 @@ var sketch1_status_left = function(p) {
         scan1_status_change_done = 1;
       }
     } else if (scan1_status == SCAN1_STATUS_LOADING) {
-      img_left_size = STATUS_W;
+      img_left_size = STATUS_W * 1.71;
       cnv = p.createCanvas(img_left_size, STATUS_H);
-      img_1_status_left = p.loadImage('data/batsu_g2.png');
-//      img_1_status_left = p.loadImage('data/next_g.png');
+      cnv.position(SCAN_IMG_X_ZERO + img_left_offset);
+      img_1_status_left = p.loadImage('data/nextg_3.png');
+
       console.log('scan1_status to loaded');
       scan1_status = SCAN1_STATUS_LOADED;
       scan1_status_change_done = 0;
 
-      //img_1_status_right = p.loadImage('data/next_g.png');
     } else if (scan1_status == SCAN1_STATUS_LOADED) {
       if (scan1_status_change_done == 0) {
         console.log('change status img to BATSU');
@@ -235,6 +237,7 @@ var sketch1_status_left = function(p) {
         img_left_size = STATUS_W * 2;
         cnv = p.createCanvas(img_left_size, STATUS_H);
         img_1_status_left = p.loadImage('data/ok_g.png');
+        img_left_offset = 0;
         scan1_status_change_done = 1;
         keyLeftState = KEY_STATE_IDLE;
       }
@@ -248,8 +251,8 @@ var sketch1_status_left = function(p) {
 
 var sketch1_status_right = function(p) {
   var img_left_size = STATUS_W;
+  var
   img_1_status_right = p.loadImage('data/trans_y.png');
-//    img_1_status_right = p.loadImage('data/next_g.png');
   p.setup = function() {
     cnv = p.createCanvas(img_left_size, STATUS_H);
     //p.background(0);
@@ -267,7 +270,6 @@ var sketch1_status_right = function(p) {
       }
     } else if (scan1_status == SCAN1_STATUS_LOADING) {
       //img_left_size = STATUS_W;
-      //img_1_status_left = p.loadImage('data/batsu_g2.png');
       console.log('change status1 img to NEXT');
       console.log('set status1 right back white');
       img_1_status_right = p.loadImage('data/next_g.png');
@@ -349,13 +351,11 @@ var sketch2_status_left = function(p) {
     } else if (scan2_status == SCAN2_STATUS_LOADING) {
       img_left_size = STATUS_W;
       cnv = p.createCanvas(img_left_size, STATUS_H);
-      img_2_status_left = p.loadImage('data/batsu_g2.png');
-//      img_2_status_left = p.loadImage('data/next_g.png');
+      img_2_status_left = p.loadImage('data/nextg_3.png');
       console.log('scan2_status to loaded');
       scan2_status = SCAN2_STATUS_LOADED;
       scan2_status_change_done = 0;
 
-      //img_2_status_right = p.loadImage('data/next_g.png');
     } else if (scan2_status == SCAN2_STATUS_LOADED) {
       if (scan2_status_change_done == 0) {
         console.log('change status img to BATSU');

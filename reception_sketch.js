@@ -79,6 +79,7 @@ function sketchFuncs(p) {
 
 var cnv_back;
 let song;
+let voice_hikitsugi;
 KEY_STATE_IDLE = 0;
 KEY_STATE_BUSY = 1;
 var keyLeftState = KEY_STATE_IDLE;
@@ -150,6 +151,7 @@ function OnConfirmDev1() {
   });
   scan1_status_change_done = 3;
   scan1_status = SCAN1_STATUS_OK;
+  voice_hikitsugi.play();
 //  keyLeftState = KEY_STATE_BUSY;
 }
 
@@ -159,6 +161,7 @@ function OnConfirmDev2() {
   });
   scan2_status_change_done = 3;
   scan2_status = SCAN1_STATUS_OK;
+  voice_hikitsugi.play();
 //  keyLeftState = KEY_STATE_BUSY;
 }
 
@@ -195,8 +198,8 @@ var sketch1_status_left = function(p) {
   var img_left_offset = 0;
   img_1_status_left = p.loadImage('data/ok_g.png');
 
-
   song = p.loadSound('data/shinkazoku.wav');
+  voice_hikitsugi = p.loadSound('data/hikitsugi.mp3');
   p.setup = function() {
     cnv = p.createCanvas(img_left_size, STATUS_H);
     p.background(255);

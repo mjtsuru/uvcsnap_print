@@ -56,6 +56,7 @@ var socket = io();
 
 var cnv_back;
 let song;
+var flg_sound_allowed = false;
 var img_slot = new Array(IMG_NUMBER);
 var img_slot_names = new Array(IMG_NUMBER);
 
@@ -344,6 +345,8 @@ var sketch6_status = function(p) {
     cnv.mouseOver(Status6_Selected);
     cnv.mouseOut(Status6_Diselected);
     cnv.mousePressed(OnClickBatsu5);
+    window.confirm(
+      'マウスでこのウィンドウを選択してください。\n"F11"キーを押してください。全画面表示されます。\n全画面表示になったら、このダイアログの"OK"を押してください。ダイアログが消えます。\n');
   };
   p.draw = function() {
     if (img_slot_names[5] != null) p.background(255);
@@ -448,6 +451,11 @@ function OnSendClickDev1(p) {
   for (var i = 0; i < img_slot_names.length; i++) {
     if (img_slot_names[i] == null || img_slot_names[i] == undefined) {
       flg_notfull = true;
+      // if (flg_sound_allowed != true) {
+      //   console.log("loading sound now");
+      //   song = p.loadSound('data/shinkazoku.wav');
+      //   flg_sound_allowed = true;
+      // }
       if (song.isPlaying()) {
         // .isPlaying() returns a boolean
         //song.stop();
@@ -484,6 +492,11 @@ function OnSendClickDev2(p) {
   for (var i = 0; i < img_slot_names.length; i++) {
     if (img_slot_names[i] == null || img_slot_names[i] == undefined) {
       flg_notfull = true;
+      // if (flg_sound_allowed != true) {
+      //   console.log("loading sound now");
+      //   song = p.loadSound('data/shinkazoku.wav');
+      //   flg_sound_allowed = true;
+      // }
       if (song.isPlaying()) {
         // .isPlaying() returns a boolean
         //song.stop();
@@ -538,3 +551,7 @@ document.onkeydown = (event) => {
     return false;
   }
 };
+
+// window.onload = function() {
+//   window.confirm('マウスでこのウィンドウをクリックしてください。\n"F11"キーを押してください。\n全画面表示になったら、このダイアログの"OK"を押してください。\n');
+// }
